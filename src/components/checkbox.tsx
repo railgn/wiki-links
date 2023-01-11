@@ -4,11 +4,17 @@ type Props = {
     setFilter: (state: Filter) => void;
     filter: Filter;
     category: Category;
+    mykey: number;
 };
 
-export default function Checkbox({ setFilter, filter, category }: Props) {
+export default function Checkbox({
+    setFilter,
+    filter,
+    category,
+    mykey,
+}: Props) {
     return (
-        <div>
+        <div key={mykey}>
             <label htmlFor={category}>
                 <input
                     type="checkbox"

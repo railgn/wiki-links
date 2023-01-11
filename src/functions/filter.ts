@@ -1,5 +1,3 @@
-import { boolean, z } from "zod";
-
 export type Category =
     | "Agriculture, food, and drink"
     | "Art and architecture"
@@ -41,6 +39,7 @@ export function generate_category(filter: Filter) {
     const possible = [];
 
     for (const category in filter) {
+        //@ts-ignore
         if (filter[category]) {
             possible.push(category);
         }

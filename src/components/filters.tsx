@@ -10,17 +10,21 @@ type Props = {
 export default function Filters({ setFilter, filter }: Props) {
     const renderFilters = (filter: Filter) => {
         const result = [];
+        let key = 1;
         for (const category in filter) {
             result.push(
+                //@ts-ignore
                 <Checkbox
                     setFilter={setFilter}
                     filter={filter}
                     category={category as Category}
+                    key={key}
                 />
             );
+            key++;
         }
 
-        return [<div>{result}</div>];
+        return <>{result}</>;
     };
 
     return <div>{renderFilters(filter)}</div>;

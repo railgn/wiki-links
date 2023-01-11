@@ -1,9 +1,9 @@
-// import html from "./htmlTest.json";
+//@ts-ignore
 import JSSoup from "jssoup";
 
 export default function getAnchors(html: string) {
     if (html == "hi") {
-        return { title: "not ready", anchors: [], fetch: false };
+        return { title: "not ready", anchors: [] };
     }
     const soup = new JSSoup(JSON.parse(html));
 
@@ -36,11 +36,5 @@ export default function getAnchors(html: string) {
         }
     }
 
-    console.log(res);
-
-    // if (res.length < 15) {
-    //     return { title: title, anchors: res, fetch: true };
-    // }
-
-    return { title: title, anchors: res, fetch: false };
+    return { title: title, anchors: res };
 }
