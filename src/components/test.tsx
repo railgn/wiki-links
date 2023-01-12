@@ -10,16 +10,15 @@ import {
 } from "../functions/filter";
 import Filters from "./filters";
 import { default_score, Score } from "../functions/score";
+import nextRound from "../functions/score";
 import check_answer from "../functions/check_answer";
 import Form from "./form";
+import { defaultLink } from "../functions/link";
+import Timer from "./timer";
 
 export default function Test() {
     const [filter, setFilter] = useState(default_filters);
-    const [link, setLink] = useState({
-        fetch: false,
-        category: "Natural sciences" as Category,
-        html: "hi",
-    });
+    const [link, setLink] = useState(defaultLink);
     const [score, setScore] = useState(default_score);
 
     //change link state to trigger useQuery
@@ -54,7 +53,6 @@ export default function Test() {
             setScore({
                 ...score,
                 correct_answer: true,
-                score: score.score + score.timer,
             });
         }
     }, [score.submission]);
@@ -64,25 +62,19 @@ export default function Test() {
             <div>
                 <Filters setFilter={setFilter} filter={filter} />
             </div>
-            <button
-                onClick={() => {
-                    setLink({
-                        ...link,
-                        category: generate_category(filter),
-                    });
-                }}
-            >
-                New link
-            </button>
+            {/* clear form field on new round, get rid of auto fill */}
             <div>
                 <Form setScore={setScore} score={score} />
             </div>
             <div>Score: {score.score}</div>
+            <div>Round: {score.round}</div>
+            <button onClick={() => nextRound(score, setScore, link, setLink)}>
+                New Round
+            </button>
 
-            {/* add a new round button */}
-
-            {/* add a timer. once timer gets to 0, start next round automatically */}
-
+            <div>
+                <Timer round={score.round} score={score} setScore={setScore} />
+            </div>
             <div>Category: {link.category}</div>
             <div>Wiki Article: {anchors.title}</div>
             <div>Linked Pages: {anchors.anchors.join(", ")}</div>

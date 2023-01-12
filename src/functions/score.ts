@@ -1,9 +1,10 @@
+import { Link } from "./link";
+
 export type Score = {
     score: number;
     round: number;
     submission: string;
     correct_answer: boolean;
-    timer: GLfloat;
 };
 
 export const default_score: Score = {
@@ -11,8 +12,26 @@ export const default_score: Score = {
     round: 0,
     submission: "",
     correct_answer: false,
-    timer: 10,
 };
+
+export default function nextRound(
+    score: Score,
+    setScore: (score: Score) => void,
+    link: Link,
+    setLink: (link: Link) => void
+) {
+    setScore({
+        score: score.score,
+        correct_answer: false,
+        round: score.round + 1,
+        submission: "",
+    });
+
+    setLink({
+        ...link,
+        fetch: !link.fetch,
+    });
+}
 
 //when they press enter, change submission to what they entered
 //use Effect on submission that checks answer, if answer is correct, updated score state
