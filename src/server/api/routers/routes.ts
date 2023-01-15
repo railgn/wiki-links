@@ -23,7 +23,7 @@ export const exampleRouter = createTRPCRouter({
             const link = links[Math.floor(links.length * Math.random())];
 
             console.log(link);
-            const result = await axios.get(link, {
+            const result = await axios.get(link as string, {
                 headers: {
                     Accept: "application/json",
                 },

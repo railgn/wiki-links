@@ -5,9 +5,9 @@ export default function pickRandomAnchors(anchors: string[], count: number) {
     for (let i = 0; i < count; i++) {
         const anchor = arr[Math.floor(Math.random() * arr.length)];
 
-        result.push(anchor);
+        result.push(anchor as string);
 
-        arr.splice(arr.indexOf(anchor), 1);
+        arr.splice(arr.indexOf(anchor as string), 1);
     }
 
     return result;

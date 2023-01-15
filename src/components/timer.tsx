@@ -7,13 +7,10 @@ type Props = {
     setScore: (score: Score) => void;
 };
 
-//add a score state prop for timer being 0.
-//when time = 0 AND correct_answer = False, display random 3 correct answers
-
 export default function Timer({ round, score, setScore }: Props) {
     const Ref = useRef(null);
 
-    const [timer, setTimer] = useState("20");
+    const [timer, setTimer] = useState("10");
 
     const [win_time, setWinTime] = useState("00");
 
@@ -40,20 +37,21 @@ export default function Timer({ round, score, setScore }: Props) {
         // If you adjust it you should also need to
         // adjust the Endtime formula we are about
         // to code next
-        setTimer("20");
+        setTimer("10");
 
         if (Ref.current) clearInterval(Ref.current);
         const id = setInterval(() => {
             startTimer(e);
         }, 1000);
-        Ref.current = id;
+        Ref.current = id as any;
     };
 
     //set reset time amount
     const getDeadTime = () => {
         let deadline = new Date();
 
-        deadline.setSeconds(deadline.getSeconds() + 20);
+        //set here too
+        deadline.setSeconds(deadline.getSeconds() + 10);
         return deadline;
     };
 
@@ -84,8 +82,10 @@ export default function Timer({ round, score, setScore }: Props) {
 
     return (
         <div>
-            {!score.correct_answer && <h2>{timer}</h2>}
-            {score.correct_answer && <h2>{win_time}</h2>}
+            {!score.correct_answer && <h2>Time Left: {timer}</h2>}
+            {score.correct_answer && (
+                <h2>You earned {parseInt(win_time) * 100} points!</h2>
+            )}
         </div>
     );
 }

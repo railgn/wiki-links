@@ -15,12 +15,21 @@ export default function getAnchors(html: string) {
     const anchors = soup.findAll("a");
 
     const falsePositives = [
-        "Main page",
-        "Article",
-        "Read",
+        "main page",
+        "article",
+        "read",
         "",
-        "Terms of Use",
-        "Privacy Policy",
+        "terms of use",
+        "privacy policy",
+        "",
+        "song",
+        "single",
+        "game",
+        "isbn",
+        "issn",
+        "title",
+        "video game",
+
         title,
     ];
 
@@ -29,12 +38,13 @@ export default function getAnchors(html: string) {
             if (
                 a.attrs.href.includes("/wiki/") &&
                 a.attrs.href.indexOf(":") == -1 &&
-                !falsePositives.includes(a.text)
+                !falsePositives.includes(a.text) &&
+                !a.text.includes("(s)")
             ) {
                 res.push(a.text as string);
             }
         }
     }
 
-    return { title: title, anchors: res };
+    return { title: title as string, anchors: res };
 }
