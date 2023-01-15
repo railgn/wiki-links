@@ -12,11 +12,12 @@ export default function Form({ setScore, score }: Props) {
     const handleSubmit = (event: any) => {
         event.preventDefault();
 
-        const input: string = event.target.password.value;
+        const input: string = event.target.password.value.toString();
         if (
             input !== "" &&
             input !== score.submission &&
-            !score.correct_answer
+            !score.correct_answer &&
+            !score.round_over
         ) {
             setScore({
                 ...score,
@@ -26,7 +27,7 @@ export default function Form({ setScore, score }: Props) {
     };
 
     const handleChange = (event: any) => {
-        if (!score.correct_answer) {
+        if (!score.correct_answer && !score.round_over) {
             setMessage(event.target.value);
         }
     };
@@ -60,10 +61,10 @@ export default function Form({ setScore, score }: Props) {
                 id="password"
                 name="password"
                 placeholder="type your answer"
-                defaultValue=""
                 value={message}
                 onChange={handleChange}
                 onFocus={handleFocus}
+                autoComplete="off"
                 required
             />
             {/* <button type="submit">Submit</button> */}

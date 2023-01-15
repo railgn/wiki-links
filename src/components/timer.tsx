@@ -13,12 +13,13 @@ type Props = {
 export default function Timer({ round, score, setScore }: Props) {
     const Ref = useRef(null);
 
-    const [timer, setTimer] = useState("00");
+    const [timer, setTimer] = useState("20");
 
     const [win_time, setWinTime] = useState("00");
 
-    const getTimeRemaining = (e) => {
-        const total = Date.parse(e) - Date.parse(new Date());
+    const getTimeRemaining = (e: Date) => {
+        const total =
+            Date.parse(e.toString()) - Date.parse(new Date().toString());
         const seconds = Math.floor((total / 1000) % 60);
 
         return {
@@ -27,7 +28,7 @@ export default function Timer({ round, score, setScore }: Props) {
         };
     };
 
-    const startTimer = (e) => {
+    const startTimer = (e: Date) => {
         let { total, seconds } = getTimeRemaining(e);
 
         if (total >= 0) {
@@ -35,7 +36,7 @@ export default function Timer({ round, score, setScore }: Props) {
         }
     };
 
-    const clearTimer = (e) => {
+    const clearTimer = (e: Date) => {
         // If you adjust it you should also need to
         // adjust the Endtime formula we are about
         // to code next
@@ -66,12 +67,20 @@ export default function Timer({ round, score, setScore }: Props) {
             setScore({
                 ...score,
                 score: score.score + 100 * parseInt(timer),
-                correct_answer: true,
             });
 
             setWinTime(timer);
         }
     }, [score.correct_answer]);
+
+    useEffect(() => {
+        if (timer == "0") {
+            setScore({
+                ...score,
+                round_over: true,
+            });
+        }
+    }, [timer]);
 
     return (
         <div>

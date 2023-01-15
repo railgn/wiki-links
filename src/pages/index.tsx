@@ -1,23 +1,20 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import Test from "../components/test";
-
-import { api } from "../utils/api";
-import { useState } from "react";
+import Game from "../components/game";
 
 const Home: NextPage = () => {
-   return (
-      <>
-         <Head>
-            <title>Wiki-Links</title>
-            <meta name="" content="" />
-            <link rel="" href="" />
-         </Head>
-         <main>
-            <Test />
-         </main>
-      </>
-   );
+    return (
+        <>
+            <Head>
+                <title>Wiki-Links</title>
+                <meta name="" content="" />
+                <link rel="" href="" />
+            </Head>
+            <main>
+                <Game />
+            </main>
+        </>
+    );
 };
 
 export default Home;

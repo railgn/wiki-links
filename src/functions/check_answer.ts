@@ -8,7 +8,10 @@ export default function check_answer(
     const cleanInput = input.toLowerCase();
     for (const anchor of anchors) {
         const cleanAnchor = anchor.toLowerCase();
-        if (levenshtein(cleanInput, cleanAnchor) < 2) {
+        if (levenshtein(cleanInput, cleanAnchor) < 2 && anchor.length > 4) {
+            console.log("CORRECT");
+            return true;
+        } else if (levenshtein(cleanInput, cleanAnchor) < 1) {
             console.log("CORRECT");
             return true;
         }

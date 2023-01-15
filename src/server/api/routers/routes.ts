@@ -5,7 +5,12 @@ import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const exampleRouter = createTRPCRouter({
     getLink: publicProcedure
-        .input(z.object({ fetch: z.boolean(), category: z.string() }))
+        .input(
+            z.object({
+                fetch: z.boolean(),
+                category: z.string(),
+            })
+        )
         .query(async ({ input }) => {
             const fileName: string = `${input.category}.json`;
 
