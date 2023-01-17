@@ -150,6 +150,7 @@ export default function Game() {
                     )}
 
                     {/* answers for cheating */}
+
                     <div>(possible answers): {anchors.anchors.join(", ")}</div>
                 </>
             )}
