@@ -26,6 +26,7 @@
         "react-dom": "18.2.0",
         "string-comparison": "^1.1.0",
         "superjson": "1.9.1",
+        "wikijs": "^6.4.0",
         "zod": "^3.20.2"
     },
     "devDependencies": {

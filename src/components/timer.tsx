@@ -10,9 +10,11 @@ type Props = {
 export default function Timer({ round, score, setScore }: Props) {
     const Ref = useRef(null);
 
-    const [timer, setTimer] = useState("10");
+    const [timer, setTimer] = useState("30");
 
     const [win_time, setWinTime] = useState("00");
+
+    const [end_text, setEndText] = useState("hi");
 
     const getTimeRemaining = (e: Date) => {
         const total =
@@ -37,7 +39,7 @@ export default function Timer({ round, score, setScore }: Props) {
         // If you adjust it you should also need to
         // adjust the Endtime formula we are about
         // to code next
-        setTimer("10");
+        setTimer("30");
 
         if (Ref.current) clearInterval(Ref.current);
         const id = setInterval(() => {
@@ -51,7 +53,7 @@ export default function Timer({ round, score, setScore }: Props) {
         let deadline = new Date();
 
         //set here too
-        deadline.setSeconds(deadline.getSeconds() + 10);
+        deadline.setSeconds(deadline.getSeconds() + 30);
         return deadline;
     };
 
@@ -66,10 +68,15 @@ export default function Timer({ round, score, setScore }: Props) {
                 ...score,
                 score: score.score + 100 * parseInt(timer),
             });
-
-            setWinTime(timer);
+            setEndText(`You earned ${parseInt(win_time) * 100} points!`);
+        } else {
+            setEndText(`Incorrect!`);
         }
     }, [score.correct_answer]);
+
+    useEffect(() => {
+        setWinTime(timer);
+    }, [score.submission]);
 
     useEffect(() => {
         if (timer == "0") {
@@ -82,10 +89,8 @@ export default function Timer({ round, score, setScore }: Props) {
 
     return (
         <div>
-            {!score.correct_answer && <h2>Time Left: {timer}</h2>}
-            {score.correct_answer && (
-                <h2>You earned {parseInt(win_time) * 100} points!</h2>
-            )}
+            {score.submission === "waiting" && <h2>Time Left: {timer}</h2>}
+            {score.submission !== "waiting" && <h2>{end_text}</h2>}
         </div>
     );
 }

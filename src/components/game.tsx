@@ -1,26 +1,26 @@
 import React, { useEffect } from "react";
 import { api } from "../utils/api";
 import { useState } from "react";
-import getAnchors from "../functions/get_anchors";
 import { default_filters } from "../functions/filter";
 import Filters from "./filters";
 import { default_score } from "../functions/score";
 import nextRound from "../functions/score";
-import check_answer from "../functions/check_answer";
-import Form from "./form";
+import FormMC from "./form-mc";
 import { defaultLink } from "../functions/link";
 import Timer from "./timer";
 import { default_game } from "../functions/game";
-import pickRandomAnchors from "../functions/pick_random_anchors";
 import startGame from "../functions/game";
+import { default_answerChoices } from "../functions/answer_choices";
+
+//have the useQuery return title + anchors instead of html
+//set anchors on success as well
 
 export default function Game() {
     const [game, setGame] = useState(default_game);
     const [filter, setFilter] = useState(default_filters);
     const [link, setLink] = useState(defaultLink);
     const [score, setScore] = useState(default_score);
-    const [anchors, setAnchors] = useState({ title: "", anchors: [""] });
-    const [possible_answers, setPossible_answers] = useState("");
+    const [answerChoices, setAnswerChoices] = useState(default_answerChoices);
 
     //get a new link from data
     const linkTest = api.example.getLink.useQuery(
@@ -29,43 +29,36 @@ export default function Game() {
             refetchOnWindowFocus: false,
 
             onSuccess(data) {
-                setLink({ ...link, html: data });
+                setAnswerChoices({
+                    mainArticle: data.mainArticle,
+                    subArticle: data.subArticle,
+                    correct: data.subArticleAnswer,
+                    incorrect: data.mainArticleAnswers,
+                });
             },
         }
     );
 
-    //scrape link for anchors
-    useEffect(() => {
-        setAnchors(getAnchors(link.html));
-    }, [link.html]);
-
     //reset article on new round before http request
     useEffect(() => {
-        setAnchors({
-            anchors: [""],
-            title: "",
-        });
+        setAnswerChoices(default_answerChoices);
     }, [score.round]);
 
     //handle submissions
     useEffect(() => {
-        if (!score.submission || score.correct_answer) {
-            return;
-        }
+        if (score.submission !== "waiting") {
+            const correctness = score.submission == "correct" ? true : false;
 
-        if (check_answer(score.submission, anchors.anchors)) {
+            console.log(score.submission);
+            console.log(correctness);
+
             setScore({
                 ...score,
-                correct_answer: true,
+                correct_answer: correctness,
                 round_over: true,
             });
         }
     }, [score.submission]);
-
-    //pick example answers for the round
-    useEffect(() => {
-        setPossible_answers(pickRandomAnchors(anchors.anchors, 3).join(", "));
-    }, [anchors.anchors]);
 
     return (
         <>
@@ -98,8 +91,14 @@ export default function Game() {
                 <>
                     <div>Round: {score.round}</div>
                     <div>Score: {score.score}</div>
-                    <div>Category: {link.category}</div>
-                    <div>Wiki Article: {anchors.title}</div>
+
+                    <div>
+                        Category:{" "}
+                        {answerChoices.mainArticle != ""
+                            ? link.category
+                            : link.category}
+                    </div>
+                    <div>Wiki Article: {answerChoices.mainArticle}</div>
 
                     <div>
                         <Timer
@@ -111,28 +110,19 @@ export default function Game() {
 
                     {/* submission input */}
                     <div>
-                        <Form setScore={setScore} score={score} />
+                        <FormMC
+                            setScore={setScore}
+                            score={score}
+                            correct_anchors={answerChoices.incorrect}
+                            incorrect_anchor={answerChoices.correct}
+                            mainArticle={answerChoices.mainArticle}
+                            subArticle={answerChoices.subArticle}
+                            roundOver={score.round_over}
+                        />
                     </div>
 
                     {score.round_over && (
                         <>
-                            {!score.correct_answer && (
-                                <>
-                                    <div>
-                                        Possible Answers: {possible_answers}
-                                    </div>
-                                </>
-                            )}
-
-                            {score.correct_answer && (
-                                <>
-                                    <div>
-                                        Other possible answers:{" "}
-                                        {possible_answers}
-                                    </div>
-                                </>
-                            )}
-
                             <button
                                 onClick={() =>
                                     nextRound(
@@ -151,7 +141,9 @@ export default function Game() {
 
                     {/* answers for cheating */}
 
-                    <div>(possible answers): {anchors.anchors.join(", ")}</div>
+                    <div>
+                        (possible answers): {answerChoices.incorrect.join(", ")}
+                    </div>
                 </>
             )}
         </>

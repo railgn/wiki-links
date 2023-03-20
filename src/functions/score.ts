@@ -29,7 +29,7 @@ export default function nextRound(
         score: score.score,
         correct_answer: false,
         round: score.round + 1,
-        submission: "",
+        submission: "waiting",
         round_over: false,
     });
 

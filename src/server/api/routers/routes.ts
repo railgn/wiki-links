@@ -1,5 +1,5 @@
 import { z } from "zod";
-import axios from "axios";
+import pickRandomAnchors from "../../../functions/pick_random_anchors";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
@@ -14,21 +14,41 @@ export const exampleRouter = createTRPCRouter({
         .query(async ({ input }) => {
             const fileName: string = `${input.category}.json`;
 
-            const category = await import(`../../../data/${fileName}`);
+            const category: object = await import(`../../../data/${fileName}`);
 
             await new Promise((r) => setTimeout(r, 50));
 
-            const links: string[] = category.links;
+            const articles = Object.keys(category).filter((e) => e !== "error");
 
-            const link = links[Math.floor(links.length * Math.random())];
+            const mainArticle = articles[
+                Math.floor(articles.length * Math.random())
+            ] as string;
 
-            console.log(link);
-            const result = await axios.get(link as string, {
-                headers: {
-                    Accept: "application/json",
-                },
-            });
+            const articlesWithoutMain = articles.filter(
+                (e) => e !== mainArticle
+            );
 
-            return JSON.stringify(result.data);
+            const subArticle = articlesWithoutMain[
+                Math.floor(articlesWithoutMain.length * Math.random())
+            ] as string;
+
+            console.log("Main Article: ", mainArticle, category[mainArticle]);
+            console.log("Sub Article: ", subArticle, category[subArticle]);
+
+            const mainArticleLinks = category[mainArticle].anchors as string[];
+            const subArticleLinks = category[subArticle].anchors as string[];
+
+            const mainArticleAnswers = pickRandomAnchors(mainArticleLinks, 3);
+
+            const subArticleAnswer = subArticleLinks[
+                Math.floor(subArticleLinks.length * Math.random())
+            ] as string;
+
+            return {
+                mainArticle,
+                mainArticleAnswers,
+                subArticle,
+                subArticleAnswer,
+            };
         }),
 });
