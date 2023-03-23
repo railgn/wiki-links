@@ -11,9 +11,7 @@ import Timer from "./timer";
 import { default_game } from "../functions/game";
 import startGame from "../functions/game";
 import { default_answerChoices } from "../functions/answer_choices";
-
-//have the useQuery return title + anchors instead of html
-//set anchors on success as well
+import encodeURL from "../functions/encode_url";
 
 export default function Game() {
     const [game, setGame] = useState(default_game);
@@ -59,6 +57,9 @@ export default function Game() {
             });
         }
     }, [score.submission]);
+
+    const mainArticleURL = encodeURL(answerChoices.mainArticle);
+    const subArticleURL = encodeURL(answerChoices.subArticle);
 
     return (
         <>
@@ -137,6 +138,19 @@ export default function Game() {
                             </button>
                         </>
                     )}
+
+                    {/* article url encode checks */}
+
+                    <div>
+                        <a href={mainArticleURL} target="_blank">
+                            {mainArticleURL}
+                        </a>
+                    </div>
+                    <div>
+                        <a href={subArticleURL} target="_blank">
+                            {subArticleURL}
+                        </a>
+                    </div>
 
                     {/* answers for cheating */}
 

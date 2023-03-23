@@ -1,5 +1,6 @@
 import { z } from "zod";
 import pickRandomAnchors from "../../../functions/pick_random_anchors";
+import checkUnique from "../../../functions/unique_arr";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
@@ -24,19 +25,39 @@ export const exampleRouter = createTRPCRouter({
                 Math.floor(articles.length * Math.random())
             ] as string;
 
+            // console.log("Main Article: ", mainArticle, category[mainArticle]);
+
+            const mainArticleLinks = category[mainArticle].anchors as string[];
+
             const articlesWithoutMain = articles.filter(
                 (e) => e !== mainArticle
             );
 
-            const subArticle = articlesWithoutMain[
+            let subArticle = articlesWithoutMain[
                 Math.floor(articlesWithoutMain.length * Math.random())
             ] as string;
 
-            console.log("Main Article: ", mainArticle, category[mainArticle]);
-            console.log("Sub Article: ", subArticle, category[subArticle]);
+            let subArticleLinks = category[subArticle].anchors as string[];
 
-            const mainArticleLinks = category[mainArticle].anchors as string[];
-            const subArticleLinks = category[subArticle].anchors as string[];
+            while (!checkUnique(mainArticleLinks, subArticleLinks)) {
+                // console.log(
+                //     "Unique?: ",
+                //     checkUnique(mainArticleLinks, subArticleLinks)
+                // );
+
+                subArticle = articlesWithoutMain[
+                    Math.floor(articlesWithoutMain.length * Math.random())
+                ] as string;
+
+                subArticleLinks = category[subArticle].anchors as string[];
+            }
+
+            // console.log("Sub Article: ", subArticle, category[subArticle]);
+
+            // console.log(
+            //     "Unique?: ",
+            //     checkUnique(mainArticleLinks, subArticleLinks)
+            // );
 
             const mainArticleAnswers = pickRandomAnchors(mainArticleLinks, 3);
 

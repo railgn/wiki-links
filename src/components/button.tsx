@@ -25,8 +25,11 @@ export default function Button({
     };
 
     //change color on roundover -> color
-    //color property in HTML = a function that acts like a switch statement for color
+    //color is based on "button Return" being Correct or incorrect
 
+    //color property in HTML = a function that acts like a switch statement for style
+
+    //make this the condintional thing {roundover && (<>article here</>)}
     //add text for "Source article: " on roundover
     //display text has the same sort of switch functionality
 

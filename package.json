@@ -26,6 +26,8 @@
         "react-dom": "18.2.0",
         "string-comparison": "^1.1.0",
         "superjson": "1.9.1",
+        "url-encode-decode": "^1.0.0",
+        "urlencode": "^1.1.0",
         "wikijs": "^6.4.0",
         "zod": "^3.20.2"
     },
