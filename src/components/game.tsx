@@ -117,7 +117,6 @@ export default function Game() {
                             incorrect_anchor={answerChoices.correct}
                             mainArticle={answerChoices.mainArticle}
                             subArticle={answerChoices.subArticle}
-                            roundOver={score.round_over}
                         />
                     </div>
 
