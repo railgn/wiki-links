@@ -9,9 +9,9 @@ import FormMC from "./form-mc";
 import { defaultLink } from "../functions/link";
 import Timer from "./timer";
 import { default_game } from "../functions/game";
-import startGame from "../functions/game";
+import { startGame, categorySelect } from "../functions/game";
 import { default_answerChoices } from "../functions/answer_choices";
-import encodeURL from "../functions/encode_url";
+import styles from "../styles/game.module.css";
 
 export default function Game() {
     const [game, setGame] = useState(default_game);
@@ -47,9 +47,6 @@ export default function Game() {
         if (score.submission !== "waiting") {
             const correctness = score.submission == "correct" ? true : false;
 
-            console.log(score.submission);
-            console.log(correctness);
-
             setScore({
                 ...score,
                 correct_answer: correctness,
@@ -58,17 +55,19 @@ export default function Game() {
         }
     }, [score.submission]);
 
-    const mainArticleURL = encodeURL(answerChoices.mainArticle);
-    const subArticleURL = encodeURL(answerChoices.subArticle);
-
     return (
         <>
             {/* category filters */}
             {game.filter_select && (
                 <>
                     <div>
+                        <h3>Category Select</h3>
+                    </div>
+
+                    <div>
                         <Filters setFilter={setFilter} filter={filter} />
                     </div>
+                    <div className={styles.verticalPadding}></div>
                     <button
                         onClick={() =>
                             startGame(
@@ -90,8 +89,16 @@ export default function Game() {
             {/* game rounds */}
             {!game.filter_select && (
                 <>
+                    <div>
+                        <h3>
+                            Choose the link is NOT found in the Wiki article
+                        </h3>
+                    </div>
                     <div>Round: {score.round}</div>
                     <div>Score: {score.score}</div>
+                    <div>Current Streak: {score.streak}</div>
+
+                    <div className={styles.verticalPadding}></div>
 
                     <div>
                         Category:{" "}
@@ -121,8 +128,10 @@ export default function Game() {
                         />
                     </div>
 
+                    <div className={styles.verticalPadding}></div>
+
                     {score.round_over && (
-                        <>
+                        <div>
                             <button
                                 onClick={() =>
                                     nextRound(
@@ -136,27 +145,27 @@ export default function Game() {
                             >
                                 New Round
                             </button>
-                        </>
+                            &nbsp; &nbsp;
+                            <button
+                                onClick={() =>
+                                    categorySelect(
+                                        setScore,
+
+                                        game,
+                                        setGame
+                                    )
+                                }
+                            >
+                                Category Select
+                            </button>
+                        </div>
                     )}
 
-                    {/* article url encode checks */}
-
-                    <div>
-                        <a href={mainArticleURL} target="_blank">
-                            {mainArticleURL}
-                        </a>
-                    </div>
-                    <div>
-                        <a href={subArticleURL} target="_blank">
-                            {subArticleURL}
-                        </a>
-                    </div>
-
-                    {/* answers for cheating */}
+                    {/* answers for cheating
 
                     <div>
                         (possible answers): {answerChoices.incorrect.join(", ")}
-                    </div>
+                    </div> */}
                 </>
             )}
         </>

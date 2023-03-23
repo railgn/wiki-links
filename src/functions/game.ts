@@ -2,6 +2,7 @@ import { Score } from "./score";
 import { Link } from "./link";
 import { Filter } from "./filter";
 import { generate_category } from "./filter";
+import { default_score } from "./score";
 
 export type Game = {
     filter_select: boolean;
@@ -11,7 +12,7 @@ export const default_game: Game = {
     filter_select: true,
 };
 
-export default function startGame(
+export function startGame(
     score: Score,
     setScore: (score: Score) => void,
     link: Link,
@@ -26,6 +27,7 @@ export default function startGame(
         round: score.round + 1,
         submission: "waiting",
         round_over: false,
+        streak: 0,
     });
 
     setLink({
@@ -37,5 +39,17 @@ export default function startGame(
     setGame({
         ...game,
         filter_select: false,
+    });
+}
+
+export function categorySelect(
+    setScore: (score: Score) => void,
+    game: Game,
+    setGame: (game: Game) => void
+) {
+    setScore(default_score);
+    setGame({
+        ...game,
+        filter_select: true,
     });
 }

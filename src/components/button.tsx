@@ -1,5 +1,6 @@
-import { boolean } from "zod";
 import { ButtonReturn } from "./form-mc";
+import encodeURL from "../functions/encode_url";
+import styles from "../styles/button.module.css";
 
 type Props = {
     setButtonReturn: (state: ButtonReturn) => void;
@@ -24,22 +25,35 @@ export default function Button({
         setButtonReturn(event.target.name as ButtonReturn);
     };
 
-    //change color on roundover -> color
-    //color is based on "button Return" being Correct or incorrect
+    let buttonStyle = styles.normal;
 
-    //color property in HTML = a function that acts like a switch statement for style
+    if (roundOver) {
+        buttonStyle =
+            buttonReturn === "correct" ? styles.correct : styles.incorrect;
+    }
 
-    //make this the condintional thing {roundover && (<>article here</>)}
-    //add text for "Source article: " on roundover
-    //display text has the same sort of switch functionality
+    const articleURL = encodeURL(article);
 
     return (
         <div>
             {/* @ts-ignore */}
             {display !== "" && (
-                <button type="button" onClick={onClick} name={buttonReturn}>
-                    {display}
-                </button>
+                <>
+                    <button
+                        type="button"
+                        onClick={onClick}
+                        name={buttonReturn}
+                        className={buttonStyle}
+                    >
+                        {display}
+                    </button>
+                    &nbsp; &nbsp;
+                    {roundOver && (
+                        <a href={articleURL} target="_blank">
+                            {article}
+                        </a>
+                    )}
+                </>
             )}
         </div>
     );

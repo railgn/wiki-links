@@ -103,6 +103,7 @@ export default function FormMC({
             setScore({
                 ...score,
                 submission: buttonReturn,
+                streak: buttonReturn === "incorrect" ? 0 : score.streak,
             });
         }
     }, [buttonReturn]);

@@ -8,6 +8,7 @@ export type Score = {
     submission: string;
     correct_answer: boolean;
     round_over: boolean;
+    streak: number;
 };
 
 export const default_score: Score = {
@@ -16,6 +17,7 @@ export const default_score: Score = {
     submission: "",
     correct_answer: false,
     round_over: false,
+    streak: 0,
 };
 
 export default function nextRound(
@@ -31,6 +33,7 @@ export default function nextRound(
         round: score.round + 1,
         submission: "waiting",
         round_over: false,
+        streak: score.streak,
     });
 
     setLink({
@@ -39,13 +42,3 @@ export default function nextRound(
         fetch: !link.fetch,
     });
 }
-
-//when they press enter, change submission to what they entered
-//use Effect on submission that checks answer, if answer is correct, updated score state
-//if score.correct_answer == true, lock the input field from changes
-//also include an early return in the useEffect
-
-//when round changes, set submission = "" and correct_answer = false
-
-//make submission field flash when you submit any answer
-//change it to green when you have a correct answer

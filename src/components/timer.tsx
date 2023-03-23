@@ -67,6 +67,7 @@ export default function Timer({ round, score, setScore }: Props) {
             setScore({
                 ...score,
                 score: score.score + 100 * parseInt(timer),
+                streak: score.streak + 1,
             });
             setEndText(`You earned ${parseInt(win_time) * 100} points!`);
         } else {
@@ -80,17 +81,28 @@ export default function Timer({ round, score, setScore }: Props) {
 
     useEffect(() => {
         if (timer == "0") {
-            setScore({
-                ...score,
-                round_over: true,
-            });
+            if (
+                score.submission === "waiting" &&
+                score.correct_answer === false
+            ) {
+                setScore({
+                    ...score,
+                    round_over: true,
+                    streak: 0,
+                });
+            }
         }
     }, [timer]);
 
     return (
         <div>
-            {score.submission === "waiting" && <h2>Time Left: {timer}</h2>}
+            {score.submission === "waiting" && timer !== "0" && (
+                <h2>Time Left: {timer}</h2>
+            )}
             {score.submission !== "waiting" && <h2>{end_text}</h2>}
+            {score.submission === "waiting" && timer === "0" && (
+                <h2>Time Over!</h2>
+            )}
         </div>
     );
 }
