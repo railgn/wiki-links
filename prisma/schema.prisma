@@ -2,16 +2,39 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
 }
 
 datasource db {
-    provider = "sqlite"
-    url      = env("DATABASE_URL")
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model saveData {
+   id        Int   @id @default(autoincrement())
+   password  String @unique
+   wins      Int 
+   highStreak Int 
+   curStreak  Int 
+   avail_poke Json
 }
+
+model Board {
+  id        Int   @id @default(autoincrement())
+  url       String @unique
+  boardData Json?
+  turn      String
+  gameOver  Boolean?
+  winner    String?
+}
+
+model wikiScores{
+  id        Int   @id @default(autoincrement())
+  date      DateTime @default(now())
+  score     Int
+  categories String 
+  name      String?
+}
+

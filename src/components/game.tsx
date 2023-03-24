@@ -8,10 +8,11 @@ import nextRound from "../functions/score";
 import FormMC from "./form-mc";
 import { defaultLink } from "../functions/link";
 import Timer from "./timer";
-import { default_game } from "../functions/game";
+import { default_game, gameOver } from "../functions/game";
 import { startGame, categorySelect } from "../functions/game";
 import { default_answerChoices } from "../functions/answer_choices";
 import styles from "../styles/game.module.css";
+import GameOver from "./game_over";
 
 export default function Game() {
     const [game, setGame] = useState(default_game);
@@ -19,6 +20,13 @@ export default function Game() {
     const [link, setLink] = useState(defaultLink);
     const [score, setScore] = useState(default_score);
     const [answerChoices, setAnswerChoices] = useState(default_answerChoices);
+
+    //set game_over
+    useEffect(() => {
+        if (score.round > 1) {
+            gameOver(setGame);
+        }
+    }, [score.round]);
 
     //get a new link from data
     const linkTest = api.example.getLink.useQuery(
@@ -87,12 +95,10 @@ export default function Game() {
             )}
 
             {/* game rounds */}
-            {!game.filter_select && (
+            {!game.filter_select && !game.game_over && (
                 <>
                     <div>
-                        <h3>
-                            Choose the link is NOT found in the Wiki article
-                        </h3>
+                        <h3>Choose the link NOT found in the Wiki article</h3>
                     </div>
                     <div>Round: {score.round}</div>
                     <div>Score: {score.score}</div>
@@ -148,12 +154,7 @@ export default function Game() {
                             &nbsp; &nbsp;
                             <button
                                 onClick={() =>
-                                    categorySelect(
-                                        setScore,
-
-                                        game,
-                                        setGame
-                                    )
+                                    categorySelect(setScore, game, setGame)
                                 }
                             >
                                 Category Select
@@ -166,6 +167,21 @@ export default function Game() {
                     <div>
                         (possible answers): {answerChoices.incorrect.join(", ")}
                     </div> */}
+                </>
+            )}
+
+            {/* game end */}
+            {game.game_over && (
+                <>
+                    <GameOver
+                        score={score}
+                        game={game}
+                        setGame={setGame}
+                        setScore={setScore}
+                        link={link}
+                        setLink={setLink}
+                        filter={filter}
+                    />
                 </>
             )}
         </>

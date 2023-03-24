@@ -6,10 +6,12 @@ import { default_score } from "./score";
 
 export type Game = {
     filter_select: boolean;
+    game_over: boolean;
 };
 
 export const default_game: Game = {
     filter_select: true,
+    game_over: false,
 };
 
 export function startGame(
@@ -22,9 +24,9 @@ export function startGame(
     setGame: (game: Game) => void
 ) {
     setScore({
-        score: score.score,
+        score: 0,
         correct_answer: false,
-        round: score.round + 1,
+        round: 1,
         submission: "waiting",
         round_over: false,
         streak: 0,
@@ -37,7 +39,7 @@ export function startGame(
     });
 
     setGame({
-        ...game,
+        game_over: false,
         filter_select: false,
     });
 }
@@ -49,7 +51,14 @@ export function categorySelect(
 ) {
     setScore(default_score);
     setGame({
-        ...game,
+        game_over: false,
         filter_select: true,
+    });
+}
+
+export function gameOver(setGame: (game: Game) => void) {
+    setGame({
+        game_over: true,
+        filter_select: false,
     });
 }

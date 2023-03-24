@@ -3,6 +3,9 @@ import pickRandomAnchors from "../../../functions/pick_random_anchors";
 import checkUnique from "../../../functions/unique_arr";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 export const exampleRouter = createTRPCRouter({
     getLink: publicProcedure
@@ -27,6 +30,7 @@ export const exampleRouter = createTRPCRouter({
 
             // console.log("Main Article: ", mainArticle, category[mainArticle]);
 
+            //@ts-ignore
             const mainArticleLinks = category[mainArticle].anchors as string[];
 
             const articlesWithoutMain = articles.filter(
@@ -36,7 +40,7 @@ export const exampleRouter = createTRPCRouter({
             let subArticle = articlesWithoutMain[
                 Math.floor(articlesWithoutMain.length * Math.random())
             ] as string;
-
+            //@ts-ignore
             let subArticleLinks = category[subArticle].anchors as string[];
 
             while (!checkUnique(mainArticleLinks, subArticleLinks)) {
@@ -48,7 +52,7 @@ export const exampleRouter = createTRPCRouter({
                 subArticle = articlesWithoutMain[
                     Math.floor(articlesWithoutMain.length * Math.random())
                 ] as string;
-
+                //@ts-ignore
                 subArticleLinks = category[subArticle].anchors as string[];
             }
 
@@ -72,4 +76,14 @@ export const exampleRouter = createTRPCRouter({
                 subArticleAnswer,
             };
         }),
+    postSave: publicProcedure
+        .input(
+            z.object({
+                score: z.number(),
+                categories: z.array(z.string()),
+                date: z.date(),
+                name: z.string().optional(),
+            })
+        )
+        .mutation(async ({ input }) => {}),
 });
