@@ -33,7 +33,7 @@ export default function GameOver({
     });
 
     useEffect(() => {
-        if (game.game_over && !postScore) {
+        if (!postScore) {
             setPostScore(true);
 
             const categories: string[] = [];
@@ -54,7 +54,7 @@ export default function GameOver({
                 score: score.score,
             });
         }
-    }, [game.game_over]);
+    }, [postScore]);
 
     //retrieve top 10 scores from database
 
