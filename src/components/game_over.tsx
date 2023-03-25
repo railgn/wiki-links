@@ -1,7 +1,9 @@
+import { useEffect, useState } from "react";
 import { Filter } from "../functions/filter";
 import { Game, categorySelect, startGame } from "../functions/game";
 import { Link } from "../functions/link";
 import { Score } from "../functions/score";
+import { api } from "../utils/api";
 
 type Props = {
     score: Score;
@@ -22,7 +24,37 @@ export default function GameOver({
     setLink,
     filter,
 }: Props) {
+    const [postScore, setPostScore] = useState(false);
+
     //post score to database
+
+    const { mutate } = api.example.postScore.useMutation({
+        retry: false,
+    });
+
+    useEffect(() => {
+        if (game.game_over && !postScore) {
+            setPostScore(true);
+
+            const categories: string[] = [];
+
+            for (const category in filter) {
+                //@ts-ignore
+                if (filter[category]) {
+                    categories.push(category);
+                }
+            }
+
+            if (categories.length === 0) {
+                categories.push("All");
+            }
+
+            mutate({
+                categories: categories,
+                score: score.score,
+            });
+        }
+    }, [game.game_over]);
 
     //retrieve top 10 scores from database
 

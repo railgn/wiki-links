@@ -28,8 +28,6 @@ export const exampleRouter = createTRPCRouter({
                 Math.floor(articles.length * Math.random())
             ] as string;
 
-            // console.log("Main Article: ", mainArticle, category[mainArticle]);
-
             //@ts-ignore
             const mainArticleLinks = category[mainArticle].anchors as string[];
 
@@ -44,24 +42,12 @@ export const exampleRouter = createTRPCRouter({
             let subArticleLinks = category[subArticle].anchors as string[];
 
             while (!checkUnique(mainArticleLinks, subArticleLinks)) {
-                // console.log(
-                //     "Unique?: ",
-                //     checkUnique(mainArticleLinks, subArticleLinks)
-                // );
-
                 subArticle = articlesWithoutMain[
                     Math.floor(articlesWithoutMain.length * Math.random())
                 ] as string;
                 //@ts-ignore
                 subArticleLinks = category[subArticle].anchors as string[];
             }
-
-            // console.log("Sub Article: ", subArticle, category[subArticle]);
-
-            // console.log(
-            //     "Unique?: ",
-            //     checkUnique(mainArticleLinks, subArticleLinks)
-            // );
 
             const mainArticleAnswers = pickRandomAnchors(mainArticleLinks, 3);
 
@@ -76,14 +62,59 @@ export const exampleRouter = createTRPCRouter({
                 subArticleAnswer,
             };
         }),
-    postSave: publicProcedure
+    postScore: publicProcedure
         .input(
             z.object({
                 score: z.number(),
                 categories: z.array(z.string()),
-                date: z.date(),
                 name: z.string().optional(),
             })
         )
-        .mutation(async ({ input }) => {}),
+        .mutation(async ({ input }) => {
+            try {
+                await prisma.wikiScores.create({
+                    data: {
+                        categories: input.categories.join(", "),
+                        score: input.score,
+                        name: input.name ? input.name : "",
+                    },
+                });
+            } catch (e) {
+                console.error(e);
+                return {
+                    text: `post failed`,
+                };
+            }
+
+            return {
+                text: `post success`,
+            };
+        }),
+    getScores: publicProcedure
+        .input(
+            z.object({
+                fetch: z.boolean(),
+            })
+        )
+        .query(async ({ input }) => {
+            if (input.fetch) {
+                const response = await prisma.wikiScores.findMany({
+                    select: {
+                        score: true,
+                        categories: true,
+                        date: true,
+                        name: true,
+                    },
+                    orderBy: {
+                        score: "desc",
+                    },
+                });
+
+                console.log(response);
+
+                return response;
+            }
+
+            return ["No scores available"];
+        }),
 });
