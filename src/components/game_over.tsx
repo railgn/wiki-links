@@ -4,6 +4,10 @@ import { Game, categorySelect, startGame } from "../functions/game";
 import { Link } from "../functions/link";
 import { Score } from "../functions/score";
 import { api } from "../utils/api";
+import { nicknames } from "../functions/nicknames";
+import HighScores from "./highscores";
+import { HighScoreType } from "../functions/highscore";
+import styles from "../styles/gameOver.module.css";
 
 type Props = {
     score: Score;
@@ -25,16 +29,23 @@ export default function GameOver({
     filter,
 }: Props) {
     const [postScore, setPostScore] = useState(false);
+    const [highScores, setHighScores] = useState([{} as HighScoreType]);
+    const [name, setName] = useState("");
+    const [categoryState, setCategoryState] = useState("");
+    const [fetchScores, setFetchScores] = useState(false);
 
     //post score to database
 
     const { mutate } = api.example.postScore.useMutation({
         retry: false,
+        onSuccess(data) {
+            setFetchScores(true);
+        },
     });
 
     useEffect(() => {
-        if (!postScore) {
-            setPostScore(true);
+        setPostScore((newestPostScoreValue) => {
+            if (!(game.game_over && !newestPostScoreValue)) return false;
 
             const categories: string[] = [];
 
@@ -49,20 +60,53 @@ export default function GameOver({
                 categories.push("All");
             }
 
+            setCategoryState(categories.join(", "));
+
+            const nickname =
+                nicknames[Math.floor(nicknames.length * Math.random())];
+
+            setName(`Anonymous ${nickname}`);
+
             mutate({
                 categories: categories,
                 score: score.score,
+                name: `Anonymous ${nickname}`,
             });
-        }
-    }, [postScore]);
+            return true;
+        });
+    }, [game.game_over]);
 
     //retrieve top 10 scores from database
 
+    const getScores = api.example.getScores.useQuery(
+        {
+            fetch: fetchScores,
+        },
+        {
+            refetchOnWindowFocus: false,
+
+            onSuccess(data) {
+                setHighScores(data);
+            },
+        }
+    );
+
     return (
         <>
-            <div>Your score: {score.score}</div>
+            <div>Name: {name}</div>
+            <div>Score: {score.score}</div>
+            <div>Categories: {categoryState}</div>
+
+            <div className={styles.verticalPadding} />
 
             {/* display top 10 scores */}
+
+            <HighScores
+                highscores={highScores}
+                name={name}
+                score={score.score}
+                categories={categoryState}
+            />
 
             <div>
                 <button onClick={() => categorySelect(setScore, game, setGame)}>

@@ -21,9 +21,11 @@ export default function Game() {
     const [score, setScore] = useState(default_score);
     const [answerChoices, setAnswerChoices] = useState(default_answerChoices);
 
+    const numberOfRounds = 10;
+
     //set game_over
     useEffect(() => {
-        if (score.round > 1) {
+        if (score.round > numberOfRounds) {
             gameOver(setGame);
         }
     }, [score.round]);

@@ -4,6 +4,7 @@ import checkUnique from "../../../functions/unique_arr";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
 import { PrismaClient } from "@prisma/client";
+import { HighScoreType } from "../../../functions/highscore";
 
 const prisma = new PrismaClient();
 
@@ -109,12 +110,9 @@ export const exampleRouter = createTRPCRouter({
                         score: "desc",
                     },
                 });
-
-                console.log(response);
-
-                return response;
+                return response.slice(0, 10);
             }
 
-            return ["No scores available"];
+            return [{} as HighScoreType];
         }),
 });

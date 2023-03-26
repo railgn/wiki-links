@@ -9,6 +9,7 @@ type Props = {
     article: string;
     color: string;
     roundOver: boolean;
+    mykey: number;
 };
 
 export default function Button({
@@ -18,6 +19,7 @@ export default function Button({
     article,
     color,
     roundOver,
+    mykey,
 }: Props) {
     const onClick = (event: any) => {
         event.preventDefault();
@@ -44,6 +46,7 @@ export default function Button({
                         onClick={onClick}
                         name={buttonReturn}
                         className={buttonStyle}
+                        key={mykey}
                     >
                         {display}
                     </button>

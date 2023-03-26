@@ -73,6 +73,8 @@ export default function FormMC({
 
         const result = [];
 
+        let key = 1;
+
         for (let i = 0; i < buttonInfo.length; i++) {
             result.push(
                 <div>
@@ -87,9 +89,11 @@ export default function FormMC({
                         // @ts-ignore
                         color={buttonInfo[buttonOrder[i]].color}
                         roundOver={score.round_over}
+                        mykey={key}
                     />
                 </div>
             );
+            key++;
         }
 
         return <>{result}</>;
