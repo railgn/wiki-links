@@ -1,8 +1,13 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import Game from "../components/game";
+import Link from "next/link";
+import createURL from "../functions/createURL";
+
+import { useState } from "react";
 
 const Home: NextPage = () => {
+    const [joinState, setJoinState] = useState("0000");
+
     return (
         <>
             <Head>
@@ -11,7 +16,23 @@ const Home: NextPage = () => {
                 <link rel="" href="" />
             </Head>
             <main>
-                <Game />
+                <h1>Wiki-links</h1>
+                <h2>
+                    <div>
+                        <Link href={createURL()}>Start Game</Link>
+                    </div>
+                    <div>
+                        <input
+                            type="text"
+                            id="join-code"
+                            placeholder="Enter Code Here"
+                            onChange={(a) => {
+                                setJoinState(a.target.value);
+                            }}
+                        />
+                        <Link href={`/game/${joinState}`}>Join Game</Link>
+                    </div>
+                </h2>
             </main>
         </>
     );
