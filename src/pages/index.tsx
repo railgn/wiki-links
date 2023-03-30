@@ -20,8 +20,7 @@ const Home: NextPage = () => {
                 <h2>
                     <div>
                         <Link href={createURL()}>Start Game</Link>
-                    </div>
-                    <div>
+
                         <input
                             type="text"
                             id="join-code"
