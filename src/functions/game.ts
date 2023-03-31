@@ -44,6 +44,20 @@ export function startGame(
     });
 }
 
+export function startGame_nonLeader(
+    score: Score,
+    setScore: (score: Score) => void
+) {
+    setScore({
+        score: 0,
+        correct_answer: false,
+        round: 1,
+        submission: "waiting",
+        round_over: false,
+        streak: 0,
+    });
+}
+
 export function categorySelect(
     setScore: (score: Score) => void,
     game: Game,

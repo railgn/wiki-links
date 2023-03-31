@@ -8,7 +8,7 @@ import nextRound from "../functions/score";
 import FormMC from "./form-mc";
 import { defaultLink } from "../functions/link";
 import Timer from "./timer";
-import { default_game, gameOver } from "../functions/game";
+import { default_game, gameOver, startGame_nonLeader } from "../functions/game";
 import { startGame, categorySelect } from "../functions/game";
 import { default_answerChoices } from "../functions/answer_choices";
 import styles from "../styles/game.module.css";
@@ -43,22 +43,50 @@ export default function Game() {
                 //@ts-ignore
                 socket = io();
 
+                let localLeader = false;
+
                 socket.on("connect", () => {
                     console.log(`connect on ${pid}`);
                     socket.emit("pid", pid);
                 });
 
+                socket.on("disconnect", () => {
+                    console.log("disconnect");
+                });
+
                 socket.on("become leader", () => {
                     console.log("become leader");
                     setIsLeader(true);
+                    localLeader = true;
                 });
 
                 socket.on("a user has joined this room", () => {
                     console.log("a user has joined this room");
                 });
 
-                socket.on("disconnect", () => {
-                    console.log("disconnect");
+                socket.on("pull filter", (filter) => {
+                    if (!localLeader) {
+                        console.log("filter pulled");
+                        setFilter(filter);
+                    }
+                });
+
+                socket.on("pull answer choices", (answerChoices) => {
+                    if (!localLeader) {
+                        console.log("answer choices pulled");
+                        setAnswerChoices(answerChoices);
+                    }
+                });
+
+                socket.on("pull game state", (game_server) => {
+                    if (!localLeader) {
+                        console.log("game state pulled");
+                        setGame(game_server);
+
+                        if (!game_server.game_over) {
+                            startGame_nonLeader(score, setScore);
+                        }
+                    }
                 });
             });
 
@@ -69,9 +97,18 @@ export default function Game() {
     //filter change event
     useEffect(() => {
         if (isLeader) {
-            socket.emit("post filter", filter);
+            console.log("post filter");
+            socket.emit("post filter", pid, filter);
         }
     }, [filter]);
+
+    //filter select event
+    useEffect(() => {
+        if (isLeader) {
+            console.log("post game state");
+            socket.emit("post game state", pid, game);
+        }
+    }, [game]);
 
     //set game_over
     useEffect(() => {
@@ -81,18 +118,29 @@ export default function Game() {
     }, [score.round]);
 
     //get a new link from data
+
     const linkTest = api.example.getLink.useQuery(
         { fetch: link.fetch, category: link.category },
         {
             refetchOnWindowFocus: false,
 
             onSuccess(data) {
-                setAnswerChoices({
-                    mainArticle: data.mainArticle,
-                    subArticle: data.subArticle,
-                    correct: data.subArticleAnswer,
-                    incorrect: data.mainArticleAnswers,
-                });
+                if (isLeader) {
+                    setAnswerChoices({
+                        mainArticle: data.mainArticle,
+                        subArticle: data.subArticle,
+                        correct: data.subArticleAnswer,
+                        incorrect: data.mainArticleAnswers,
+                    });
+
+                    console.log("post answer choices");
+                    socket.emit("post answer choices", pid, {
+                        mainArticle: data.mainArticle,
+                        subArticle: data.subArticle,
+                        correct: data.subArticleAnswer,
+                        incorrect: data.mainArticleAnswers,
+                    });
+                }
             },
         }
     );

@@ -22,6 +22,7 @@ export default function Checkbox({
                     type="checkbox"
                     name={category}
                     defaultChecked={filter[category]}
+                    checked={filter[category]}
                     disabled={!isLeader}
                     onClick={() => {
                         setFilter({

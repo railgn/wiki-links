@@ -1,4 +1,8 @@
-WIP
+Actual to do:
+
+-sync up round endings (flag for when everyone is done OR timer on server)
+
+////////////////////////////////////////
 
 finish single player version
 

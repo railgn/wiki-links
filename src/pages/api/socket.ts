@@ -1,11 +1,18 @@
 import { Server, Socket } from "socket.io";
 import { Filter, default_filters } from "../../functions/filter";
+import {
+    AnswerChoices,
+    default_answerChoices,
+} from "../../functions/answer_choices";
+import { Game, default_game } from "../../functions/game";
 
 type SocketHash = {
     [pid: string]: {
         leader: { [key: string]: Socket };
         all_sockets: { [key: string]: Socket };
-        filters: Filter;
+        filter: Filter;
+        answerChoices: AnswerChoices;
+        game: Game;
     };
 };
 
@@ -22,18 +29,25 @@ const ioHandler = (req, res) => {
                 const id = socket.id;
 
                 if (socketObj[pid]) {
-                    socketObj[pid].all_sockets[id] = socket;
+                    socketObj[pid]!.all_sockets[id] = socket;
                 } else {
                     socketObj[pid] = {
                         leader: { [id]: socket },
                         all_sockets: { [id]: socket },
-                        filters: default_filters,
+                        filter: default_filters,
+                        answerChoices: default_answerChoices,
+                        game: default_game,
                     };
                     socket.emit("become leader");
                 }
 
-                for (const id in socketObj[pid].all_sockets) {
-                    socketObj[pid].all_sockets[id].emit(
+                socketObj[pid]!.all_sockets[id]!.emit(
+                    "pull filter",
+                    socketObj[pid]!.filter
+                );
+
+                for (const id in socketObj[pid]!.all_sockets) {
+                    socketObj[pid]!.all_sockets[id]!.emit(
                         "a user has joined this room"
                     );
                 }
@@ -41,8 +55,39 @@ const ioHandler = (req, res) => {
                 console.log(socketObj[pid]);
             });
 
-            socket.on("post filter", (data) => {
-                console.log("hey filter worked");
+            socket.on("post filter", (pid, filter) => {
+                console.log("filter recieved");
+                socketObj[pid]!.filter = filter;
+                for (const id in socketObj[pid]!.all_sockets) {
+                    socketObj[pid]!.all_sockets[id]!.emit(
+                        "pull filter",
+                        filter
+                    );
+                }
+            });
+
+            socket.on("post answer choices", (pid, answerChoices) => {
+                console.log("answer choices recieved");
+
+                socketObj[pid]!.answerChoices = answerChoices;
+                for (const id in socketObj[pid]!.all_sockets) {
+                    socketObj[pid]!.all_sockets[id]!.emit(
+                        "pull answer choices",
+                        answerChoices
+                    );
+                }
+            });
+
+            socket.on("post game state", (pid, game) => {
+                console.log("game state recieved");
+
+                socketObj[pid]!.game = game;
+                for (const id in socketObj[pid]!.all_sockets) {
+                    socketObj[pid]!.all_sockets[id]!.emit(
+                        "pull game state",
+                        game
+                    );
+                }
             });
         });
 
