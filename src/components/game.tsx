@@ -13,15 +13,65 @@ import { startGame, categorySelect } from "../functions/game";
 import { default_answerChoices } from "../functions/answer_choices";
 import styles from "../styles/game.module.css";
 import GameOver from "./game_over";
+import { useRouter } from "next/router";
+import io from "socket.io-client";
+import { Socket } from "socket.io";
+import { DefaultEventsMap } from "@socket.io/component-emitter";
+//@ts-ignore
+let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
 
 export default function Game() {
+    const [isLeader, setIsLeader] = useState(false);
+
     const [game, setGame] = useState(default_game);
     const [filter, setFilter] = useState(default_filters);
     const [link, setLink] = useState(defaultLink);
     const [score, setScore] = useState(default_score);
     const [answerChoices, setAnswerChoices] = useState(default_answerChoices);
+    const [socketConnect, setSocketConnect] = useState(true);
 
     const numberOfRounds = 10;
+
+    const router = useRouter();
+    const { pid } = router.query;
+
+    useEffect(() => {
+        setSocketConnect((newestSocketConnectValue) => {
+            if (!newestSocketConnectValue) return false;
+            console.log("socket running");
+            fetch("/api/socket").finally(() => {
+                //@ts-ignore
+                socket = io();
+
+                socket.on("connect", () => {
+                    console.log(`connect on ${pid}`);
+                    socket.emit("pid", pid);
+                });
+
+                socket.on("become leader", () => {
+                    console.log("become leader");
+                    setIsLeader(true);
+                });
+
+                socket.on("a user has joined this room", () => {
+                    console.log("a user has joined this room");
+                });
+
+                socket.on("disconnect", () => {
+                    console.log("disconnect");
+                });
+            });
+
+            return false;
+        });
+    }, []);
+
+    //filter change event
+    useEffect(() => {
+        if (isLeader) {
+            socket.emit("post filter", filter);
+        }
+    }, [filter]);
 
     //set game_over
     useEffect(() => {
@@ -75,10 +125,15 @@ export default function Game() {
                     </div>
 
                     <div>
-                        <Filters setFilter={setFilter} filter={filter} />
+                        <Filters
+                            setFilter={setFilter}
+                            filter={filter}
+                            isLeader={isLeader}
+                        />
                     </div>
                     <div className={styles.verticalPadding}></div>
                     <button
+                        disabled={!isLeader}
                         onClick={() =>
                             startGame(
                                 score,
