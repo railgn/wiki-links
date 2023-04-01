@@ -22,6 +22,7 @@ let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
 
 export default function Game() {
     const [isLeader, setIsLeader] = useState(false);
+    const [isSpectator, setIsSpectator] = useState(true);
 
     const [game, setGame] = useState(default_game);
     const [filter, setFilter] = useState(default_filters);
@@ -44,6 +45,7 @@ export default function Game() {
                 socket = io();
 
                 let localLeader = false;
+                let localSpectator = true;
 
                 socket.on("connect", () => {
                     console.log(`connect on ${pid}`);
@@ -57,7 +59,14 @@ export default function Game() {
                 socket.on("become leader", () => {
                     console.log("become leader");
                     setIsLeader(true);
+                    setIsSpectator(false);
                     localLeader = true;
+                });
+
+                socket.on("become player", () => {
+                    console.log("become player");
+                    setIsSpectator(false);
+                    localSpectator = false;
                 });
 
                 socket.on("a user has joined this room", () => {
@@ -71,10 +80,14 @@ export default function Game() {
                     }
                 });
 
-                socket.on("pull answer choices", (answerChoices) => {
+                socket.on("pull answer choices", (answerChoices, category) => {
                     if (!localLeader) {
                         console.log("answer choices pulled");
                         setAnswerChoices(answerChoices);
+                        setLink({
+                            ...link,
+                            category,
+                        });
                     }
                 });
 
@@ -134,12 +147,17 @@ export default function Game() {
                     });
 
                     console.log("post answer choices");
-                    socket.emit("post answer choices", pid, {
-                        mainArticle: data.mainArticle,
-                        subArticle: data.subArticle,
-                        correct: data.subArticleAnswer,
-                        incorrect: data.mainArticleAnswers,
-                    });
+                    socket.emit(
+                        "post answer choices",
+                        pid,
+                        {
+                            mainArticle: data.mainArticle,
+                            subArticle: data.subArticle,
+                            correct: data.subArticleAnswer,
+                            incorrect: data.mainArticleAnswers,
+                        },
+                        link.category
+                    );
                 }
             },
         }
@@ -163,8 +181,18 @@ export default function Game() {
         }
     }, [score.submission]);
 
+    const spectator_indicator = isSpectator
+        ? "SPECTATOR"
+        : isLeader
+        ? "LEADER"
+        : "PLAYER";
+
     return (
         <>
+            <div>
+                <h1>{spectator_indicator}</h1>
+            </div>
+            <div className={styles.verticalPadding}></div>
             {/* category filters */}
             {game.filter_select && (
                 <>
@@ -198,7 +226,6 @@ export default function Game() {
                     </button>
                 </>
             )}
-
             {/* game rounds */}
             {!game.filter_select && !game.game_over && (
                 <>
@@ -224,6 +251,9 @@ export default function Game() {
                             round={score.round}
                             score={score}
                             setScore={setScore}
+                            socket={socket}
+                            isLeader={isLeader}
+                            pid={pid as string}
                         />
                     </div>
 
@@ -236,14 +266,16 @@ export default function Game() {
                             incorrect_anchor={answerChoices.correct}
                             mainArticle={answerChoices.mainArticle}
                             subArticle={answerChoices.subArticle}
+                            isSpectator={isSpectator}
                         />
                     </div>
 
                     <div className={styles.verticalPadding}></div>
 
-                    {score.round_over && (
+                    {score.round_over && isLeader && (
                         <div>
                             <button
+                                disabled={!isLeader}
                                 onClick={() =>
                                     nextRound(
                                         score,
@@ -258,6 +290,7 @@ export default function Game() {
                             </button>
                             &nbsp; &nbsp;
                             <button
+                                disabled={!isLeader}
                                 onClick={() =>
                                     categorySelect(setScore, game, setGame)
                                 }
@@ -274,7 +307,6 @@ export default function Game() {
                     </div> */}
                 </>
             )}
-
             {/* game end */}
             {game.game_over && (
                 <>

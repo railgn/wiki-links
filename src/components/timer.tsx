@@ -1,13 +1,25 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Score } from "../functions/score";
+import { Socket } from "socket.io";
+import { DefaultEventsMap } from "socket.io/dist/typed-events";
 
 type Props = {
     round: number;
     score: Score;
     setScore: (score: Score) => void;
+    socket: Socket<DefaultEventsMap, DefaultEventsMap>;
+    isLeader: boolean;
+    pid: string;
 };
 
-export default function Timer({ round, score, setScore }: Props) {
+export default function Timer({
+    round,
+    score,
+    setScore,
+    socket,
+    isLeader,
+    pid,
+}: Props) {
     const Ref = useRef(null);
 
     const [timer, setTimer] = useState("30");
@@ -57,9 +69,23 @@ export default function Timer({ round, score, setScore }: Props) {
         return deadline;
     };
 
+    if (socket && !isLeader) {
+        socket.on("pull deadline", (deadline) => {
+            clearTimer(deadline);
+        });
+    }
+
     //set timer on mount
     useEffect(() => {
-        clearTimer(getDeadTime());
+        if (isLeader) {
+            const deadline = getDeadTime();
+
+            //change round here as well?????
+            socket.emit("post deadline", pid, deadline);
+
+            clearTimer(deadline);
+        }
+        //if non-leader, deadline should be pulled from server within the same event that changes round
     }, [round]);
 
     useEffect(() => {

@@ -9,6 +9,7 @@ type Props = {
     incorrect_anchor: string;
     mainArticle: string;
     subArticle: string;
+    isSpectator: boolean;
 };
 
 export type ButtonReturn = "correct" | "incorrect" | "waiting";
@@ -20,6 +21,7 @@ export default function FormMC({
     incorrect_anchor,
     mainArticle,
     subArticle,
+    isSpectator,
 }: Props) {
     const [buttonReturn, setButtonReturn] = useState("waiting" as ButtonReturn);
     const [buttonOrder, setButtonOrder] = useState([0, 1, 2, 3]);
@@ -90,6 +92,7 @@ export default function FormMC({
                         color={buttonInfo[buttonOrder[i]].color}
                         roundOver={score.round_over}
                         mykey={key}
+                        isSpectator={isSpectator}
                     />
                 </div>
             );

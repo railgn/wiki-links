@@ -10,6 +10,7 @@ type Props = {
     color: string;
     roundOver: boolean;
     mykey: number;
+    isSpectator: boolean;
 };
 
 export default function Button({
@@ -20,6 +21,7 @@ export default function Button({
     color,
     roundOver,
     mykey,
+    isSpectator,
 }: Props) {
     const onClick = (event: any) => {
         event.preventDefault();
@@ -42,6 +44,7 @@ export default function Button({
             {display !== "" && (
                 <>
                     <button
+                        disabled={isSpectator}
                         type="button"
                         onClick={onClick}
                         name={buttonReturn}

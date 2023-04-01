@@ -2,6 +2,10 @@ Actual to do:
 
 -sync up round endings (flag for when everyone is done OR timer on server)
 
+when a players round ends, update there HUD score display with a green "O" or red "X" for if they got the correct answer.
+
+when entire round ends, update scores (or just do it at same time as above)
+
 ////////////////////////////////////////
 
 finish single player version

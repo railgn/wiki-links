@@ -1,5 +1,5 @@
 import { Server, Socket } from "socket.io";
-import { Filter, default_filters } from "../../functions/filter";
+import { Category, Filter, default_filters } from "../../functions/filter";
 import {
     AnswerChoices,
     default_answerChoices,
@@ -10,9 +10,12 @@ type SocketHash = {
     [pid: string]: {
         leader: { [key: string]: Socket };
         all_sockets: { [key: string]: Socket };
+        all_players: { [key: string]: Socket };
         filter: Filter;
         answerChoices: AnswerChoices;
+        category: Category;
         game: Game;
+        deadline: Date;
     };
 };
 
@@ -30,20 +33,32 @@ const ioHandler = (req, res) => {
 
                 if (socketObj[pid]) {
                     socketObj[pid]!.all_sockets[id] = socket;
+                    if (socketObj[pid]!.game.filter_select) {
+                        socketObj[pid]!.all_players[id] = socket;
+                        socket.emit("become player");
+                    }
                 } else {
                     socketObj[pid] = {
                         leader: { [id]: socket },
                         all_sockets: { [id]: socket },
+                        all_players: { [id]: socket },
                         filter: default_filters,
                         answerChoices: default_answerChoices,
+                        category: "Natural sciences" as Category,
                         game: default_game,
+                        deadline: new Date(),
                     };
                     socket.emit("become leader");
                 }
 
-                socketObj[pid]!.all_sockets[id]!.emit(
-                    "pull filter",
-                    socketObj[pid]!.filter
+                socket.emit("pull game state", socketObj[pid]!.game);
+
+                socket.emit("pull filter", socketObj[pid]!.filter);
+
+                socket.emit(
+                    "pull answer choices",
+                    socketObj[pid]!.answerChoices,
+                    socketObj[pid]!.category
                 );
 
                 for (const id in socketObj[pid]!.all_sockets) {
@@ -66,14 +81,18 @@ const ioHandler = (req, res) => {
                 }
             });
 
-            socket.on("post answer choices", (pid, answerChoices) => {
+            socket.on("post answer choices", (pid, answerChoices, category) => {
                 console.log("answer choices recieved");
+                console.log("category recieved");
 
                 socketObj[pid]!.answerChoices = answerChoices;
+                socketObj[pid]!.category = category;
+
                 for (const id in socketObj[pid]!.all_sockets) {
                     socketObj[pid]!.all_sockets[id]!.emit(
                         "pull answer choices",
-                        answerChoices
+                        answerChoices,
+                        category
                     );
                 }
             });
@@ -86,6 +105,19 @@ const ioHandler = (req, res) => {
                     socketObj[pid]!.all_sockets[id]!.emit(
                         "pull game state",
                         game
+                    );
+                }
+            });
+
+            socket.on("post deadline", (pid, deadline) => {
+                console.log("deadline recieved", deadline);
+
+                socketObj[pid]!.deadline = deadline;
+
+                for (const id in socketObj[pid]!.all_sockets) {
+                    socketObj[pid]!.all_sockets[id]!.emit(
+                        "pull deadline",
+                        deadline
                     );
                 }
             });
