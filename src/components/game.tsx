@@ -31,11 +31,13 @@ export default function Game() {
     const [answerChoices, setAnswerChoices] = useState(default_answerChoices);
     const [socketConnect, setSocketConnect] = useState(true);
 
-    const numberOfRounds = 10;
+    const [numberOfRounds, setNumberOfRounds] = useState(10);
+    const [roundTime, setRoundTime] = useState(20);
 
     const router = useRouter();
     const { pid } = router.query;
 
+    //socket event listeners
     useEffect(() => {
         setSocketConnect((newestSocketConnectValue) => {
             if (!newestSocketConnectValue) return false;
@@ -50,10 +52,6 @@ export default function Game() {
                 socket.on("connect", () => {
                     console.log(`connect on ${pid}`);
                     socket.emit("pid", pid);
-                });
-
-                socket.on("disconnect", () => {
-                    console.log("disconnect");
                 });
 
                 socket.on("become leader", () => {
@@ -101,6 +99,20 @@ export default function Game() {
                         }
                     }
                 });
+
+                socket.on("pull number of rounds", (numberOfRounds_server) => {
+                    if (!localLeader) {
+                        console.log("number of rounds pulled");
+                        setNumberOfRounds(numberOfRounds_server);
+                    }
+                });
+
+                socket.on("pull round time", (roundTime_server) => {
+                    if (!localLeader) {
+                        console.log("round time pulled");
+                        setRoundTime(roundTime_server);
+                    }
+                });
             });
 
             return false;
@@ -115,7 +127,7 @@ export default function Game() {
         }
     }, [filter]);
 
-    //filter select event
+    //game state event
     useEffect(() => {
         if (isLeader) {
             console.log("post game state");
@@ -123,15 +135,34 @@ export default function Game() {
         }
     }, [game]);
 
-    //set game_over
+    //set game_over event
     useEffect(() => {
-        if (score.round > numberOfRounds) {
-            gameOver(setGame);
+        if (isLeader) {
+            if (score.round > numberOfRounds) {
+                gameOver(setGame);
+            }
+            socket.emit("post round", pid, score.round);
         }
     }, [score.round]);
 
-    //get a new link from data
+    //round number event
+    useEffect(() => {
+        if (socket) {
+            socket.on("pull round", (round_server) => {
+                if (!isLeader) {
+                    console.log("round pulled");
+                    setScore((newestScoreValue) => {
+                        return {
+                            ...newestScoreValue,
+                            round: round_server,
+                        };
+                    });
+                }
+            });
+        }
+    }, [score, game]);
 
+    //get a new link from data
     const linkTest = api.example.getLink.useQuery(
         { fetch: link.fetch, category: link.category },
         {
@@ -181,6 +212,28 @@ export default function Game() {
         }
     }, [score.submission]);
 
+    //radio button handler for number of rounds
+    const handleNumberOfRounds = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        if (isLeader) {
+            setNumberOfRounds(parseInt(event.target.value));
+            socket.emit(
+                "post number of rounds",
+                pid,
+                parseInt(event.target.value)
+            );
+        }
+    };
+
+    //radio button handler for round time
+    const handleRoundTime = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (isLeader) {
+            setRoundTime(parseInt(event.target.value));
+            socket.emit("post round time", pid, parseInt(event.target.value));
+        }
+    };
+
     const spectator_indicator = isSpectator
         ? "SPECTATOR"
         : isLeader
@@ -192,7 +245,9 @@ export default function Game() {
             <div>
                 <h1>{spectator_indicator}</h1>
             </div>
+
             <div className={styles.verticalPadding}></div>
+
             {/* category filters */}
             {game.filter_select && (
                 <>
@@ -207,23 +262,115 @@ export default function Game() {
                             isLeader={isLeader}
                         />
                     </div>
+
                     <div className={styles.verticalPadding}></div>
-                    <button
-                        disabled={!isLeader}
-                        onClick={() =>
-                            startGame(
-                                score,
-                                setScore,
-                                link,
-                                setLink,
-                                filter,
-                                game,
-                                setGame
-                            )
-                        }
-                    >
-                        Start Game
-                    </button>
+                    {isSpectator && (
+                        <>
+                            Button to become player
+                            {/* Add to list of all player sockets */}
+                        </>
+                    )}
+                    {!isSpectator && (
+                        <>
+                            Button to become spectator
+                            {/* Remove from list of all player sockets */}
+                            {/* if Leader, have logic to assign new leader */}
+                            {/* add functionality for disconnecting socket on browser close (needs same leader functionality)*/}
+                        </>
+                    )}
+
+                    <div className={styles.verticalPadding}></div>
+
+                    {/* game options */}
+                    {isLeader && (
+                        <>
+                            <div>
+                                Number of Rounds
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="5-numberOfRounds"
+                                        value="5"
+                                        checked={numberOfRounds === 5}
+                                        onChange={handleNumberOfRounds}
+                                    />
+                                    5
+                                </label>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="10-numberOfRounds"
+                                        value="10"
+                                        checked={numberOfRounds === 10}
+                                        onChange={handleNumberOfRounds}
+                                    />
+                                    10
+                                </label>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="15-numberOfRounds"
+                                        value="15"
+                                        checked={numberOfRounds === 15}
+                                        onChange={handleNumberOfRounds}
+                                    />
+                                    15
+                                </label>
+                            </div>
+                            <div>
+                                Seconds per Round
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="10-roundTime"
+                                        value="10"
+                                        checked={roundTime === 10}
+                                        onChange={handleRoundTime}
+                                    />
+                                    10
+                                </label>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="20-roundTime"
+                                        value="20"
+                                        checked={roundTime === 20}
+                                        onChange={handleRoundTime}
+                                    />
+                                    20
+                                </label>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="30-roundTime"
+                                        value="30"
+                                        checked={roundTime === 30}
+                                        onChange={handleRoundTime}
+                                    />
+                                    30
+                                </label>
+                            </div>
+
+                            <div className={styles.verticalPadding}></div>
+
+                            <button
+                                disabled={!isLeader}
+                                onClick={() =>
+                                    startGame(
+                                        score,
+                                        setScore,
+                                        link,
+                                        setLink,
+                                        filter,
+                                        game,
+                                        setGame
+                                    )
+                                }
+                            >
+                                Start Game
+                            </button>
+                        </>
+                    )}
                 </>
             )}
             {/* game rounds */}
@@ -254,6 +401,7 @@ export default function Game() {
                             socket={socket}
                             isLeader={isLeader}
                             pid={pid as string}
+                            roundTime={roundTime}
                         />
                     </div>
 

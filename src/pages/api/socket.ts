@@ -16,6 +16,9 @@ type SocketHash = {
         category: Category;
         game: Game;
         deadline: Date;
+        round: number;
+        numberOfRounds: number;
+        roundTime: number;
     };
 };
 
@@ -47,6 +50,9 @@ const ioHandler = (req, res) => {
                         category: "Natural sciences" as Category,
                         game: default_game,
                         deadline: new Date(),
+                        round: 0,
+                        numberOfRounds: 10,
+                        roundTime: 20,
                     };
                     socket.emit("become leader");
                 }
@@ -119,6 +125,76 @@ const ioHandler = (req, res) => {
                         "pull deadline",
                         deadline
                     );
+                }
+            });
+
+            socket.on("post round", (pid, round) => {
+                console.log("round recieved", round);
+
+                socketObj[pid]!.round = round;
+
+                for (const id in socketObj[pid]!.all_sockets) {
+                    socketObj[pid]!.all_sockets[id]!.emit("pull round", round);
+                }
+            });
+
+            socket.on("post number of rounds", (pid, number_of_rounds) => {
+                console.log("number of rounds recieved", number_of_rounds);
+
+                socketObj[pid]!.numberOfRounds = number_of_rounds;
+
+                for (const id in socketObj[pid]!.all_sockets) {
+                    socketObj[pid]!.all_sockets[id]!.emit(
+                        "pull number of rounds",
+                        number_of_rounds
+                    );
+                }
+            });
+
+            socket.on("post round time", (pid, roundTime) => {
+                console.log("round time recieved", roundTime);
+
+                socketObj[pid]!.roundTime = roundTime;
+
+                for (const id in socketObj[pid]!.all_sockets) {
+                    socketObj[pid]!.all_sockets[id]!.emit(
+                        "pull round time",
+                        roundTime
+                    );
+                }
+            });
+
+            socket.on("disconnect", () => {
+                let pid = "pid";
+
+                for (const lobby in socketObj) {
+                    if (socketObj[lobby]?.all_sockets[socket.id]) {
+                        pid = lobby;
+                    }
+                }
+
+                delete socketObj[pid]?.all_players[socket.id];
+
+                delete socketObj[pid]?.all_sockets[socket.id];
+
+                if (Object.keys(socketObj[pid]!.all_sockets).length === 0) {
+                    delete socketObj[pid];
+                } else {
+                    if (socketObj[pid]?.leader[socket.id]) {
+                        //assign leader to first player
+                        const newLeader_ID = Object.keys(
+                            socketObj[pid]!.all_players
+                        )[0] as string;
+                        const newLeader_socket = socketObj[pid]!.all_players[
+                            newLeader_ID
+                        ] as Socket;
+
+                        delete socketObj[pid]!.leader[socket.id];
+
+                        socketObj[pid]!.leader[newLeader_ID] = newLeader_socket;
+
+                        io.to(newLeader_ID).emit("become leader");
+                    }
                 }
             });
         });

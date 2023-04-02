@@ -10,6 +10,7 @@ type Props = {
     socket: Socket<DefaultEventsMap, DefaultEventsMap>;
     isLeader: boolean;
     pid: string;
+    roundTime: number;
 };
 
 export default function Timer({
@@ -19,10 +20,11 @@ export default function Timer({
     socket,
     isLeader,
     pid,
+    roundTime,
 }: Props) {
     const Ref = useRef(null);
 
-    const [timer, setTimer] = useState("30");
+    const [timer, setTimer] = useState(roundTime.toString());
 
     const [win_time, setWinTime] = useState("00");
 
@@ -51,7 +53,7 @@ export default function Timer({
         // If you adjust it you should also need to
         // adjust the Endtime formula we are about
         // to code next
-        setTimer("30");
+        setTimer(roundTime.toString());
 
         if (Ref.current) clearInterval(Ref.current);
         const id = setInterval(() => {
@@ -65,7 +67,7 @@ export default function Timer({
         let deadline = new Date();
 
         //set here too
-        deadline.setSeconds(deadline.getSeconds() + 30);
+        deadline.setSeconds(deadline.getSeconds() + roundTime);
         return deadline;
     };
 
@@ -85,7 +87,6 @@ export default function Timer({
 
             clearTimer(deadline);
         }
-        //if non-leader, deadline should be pulled from server within the same event that changes round
     }, [round]);
 
     useEffect(() => {
