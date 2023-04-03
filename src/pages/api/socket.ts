@@ -197,6 +197,39 @@ const ioHandler = (req, res) => {
                     }
                 }
             });
+
+            socket.on("become player", (pid) => {
+                console.log("spectator => player");
+                socketObj[pid]!.all_players[socket.id] = socket;
+                socket.emit("become player handshake");
+                if (Object.keys(socketObj[pid]!.leader).length === 0) {
+                    socketObj[pid]!.leader[socket.id] = socket;
+                    socket.emit("become leader");
+                }
+            });
+
+            socket.on("become spectator", (pid) => {
+                console.log("player => spectator");
+                delete socketObj[pid]?.all_players[socket.id];
+
+                if (socketObj[pid]?.leader[socket.id]) {
+                    delete socketObj[pid]!.leader[socket.id];
+                    if (Object.keys(socketObj[pid]!.all_players).length > 0) {
+                        const newLeader_ID = Object.keys(
+                            socketObj[pid]!.all_players
+                        )[0] as string;
+                        const newLeader_socket = socketObj[pid]!.all_players[
+                            newLeader_ID
+                        ] as Socket;
+
+                        socketObj[pid]!.leader[newLeader_ID] = newLeader_socket;
+
+                        io.to(newLeader_ID).emit("become leader");
+                    }
+                }
+
+                socket.emit("become spectator handshake");
+            });
         });
 
         res.socket.server.io = io;

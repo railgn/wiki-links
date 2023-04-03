@@ -113,6 +113,19 @@ export default function Game() {
                         setRoundTime(roundTime_server);
                     }
                 });
+
+                socket.on("become player handshake", () => {
+                    setIsSpectator(false);
+                    localSpectator = false;
+                });
+
+                socket.on("become spectator handshake", () => {
+                    console.log("become spectator handshake");
+                    setIsSpectator(true);
+                    localSpectator = true;
+                    setIsLeader(false);
+                    localLeader = false;
+                });
             });
 
             return false;
@@ -234,6 +247,14 @@ export default function Game() {
         }
     };
 
+    const becomePlayer = () => {
+        socket.emit("become player", pid);
+    };
+
+    const becomeSpectator = () => {
+        socket.emit("become spectator", pid);
+    };
+
     const spectator_indicator = isSpectator
         ? "SPECTATOR"
         : isLeader
@@ -265,17 +286,15 @@ export default function Game() {
 
                     <div className={styles.verticalPadding}></div>
                     {isSpectator && (
-                        <>
-                            Button to become player
-                            {/* Add to list of all player sockets */}
-                        </>
+                        <button onClick={() => becomePlayer()}>
+                            Become a Player
+                        </button>
                     )}
                     {!isSpectator && (
                         <>
-                            Button to become spectator
-                            {/* Remove from list of all player sockets */}
-                            {/* if Leader, have logic to assign new leader */}
-                            {/* add functionality for disconnecting socket on browser close (needs same leader functionality)*/}
+                            <button onClick={() => becomeSpectator()}>
+                                Become a Spectator
+                            </button>
                         </>
                     )}
 
