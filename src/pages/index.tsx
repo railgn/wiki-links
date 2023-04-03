@@ -19,7 +19,7 @@ const Home: NextPage = () => {
                 <h1>Wiki-links</h1>
                 <h2>
                     <div>
-                        <Link href={createURL()}>Start Game</Link>
+                        <Link href={createURL()}>Create Lobby</Link>
 
                         <input
                             type="text"
@@ -29,7 +29,7 @@ const Home: NextPage = () => {
                                 setJoinState(a.target.value);
                             }}
                         />
-                        <Link href={`/game/${joinState}`}>Join Game</Link>
+                        <Link href={`/game/${joinState}`}>Join Lobby</Link>
                     </div>
                 </h2>
             </main>
