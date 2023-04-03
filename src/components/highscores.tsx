@@ -40,19 +40,29 @@ export default function HighScores({
 
     return (
         <div>
-            <table>
-                <tr>
-                    <th>Rank</th>
-                    <th>Name</th>
-                    <th>Categories</th>
-                    <th>Score</th>
-                    <th>Date</th>
-                </tr>
+            <h3>Highscores:</h3>
+            <div>
+                <table>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Categories</th>
+                        <th>Score</th>
+                        <th>Date</th>
+                    </tr>
 
-                {highscores.length > 5 && (
-                    <>{renderHighScores(highscores, name, score, categories)}</>
-                )}
-            </table>
+                    {highscores.length > 5 && (
+                        <>
+                            {renderHighScores(
+                                highscores,
+                                name,
+                                score,
+                                categories
+                            )}
+                        </>
+                    )}
+                </table>
+            </div>
         </div>
     );
 }

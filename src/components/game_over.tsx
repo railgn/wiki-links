@@ -17,6 +17,7 @@ type Props = {
     link: Link;
     setLink: (link: Link) => void;
     filter: Filter;
+    name: string;
 };
 
 export default function GameOver({
@@ -27,10 +28,10 @@ export default function GameOver({
     link,
     setLink,
     filter,
+    name,
 }: Props) {
     const [postScore, setPostScore] = useState(false);
     const [highScores, setHighScores] = useState([{} as HighScoreType]);
-    const [name, setName] = useState("");
     const [categoryState, setCategoryState] = useState("");
     const [fetchScores, setFetchScores] = useState(false);
 
@@ -62,15 +63,10 @@ export default function GameOver({
 
             setCategoryState(categories.join(", "));
 
-            const nickname =
-                nicknames[Math.floor(nicknames.length * Math.random())];
-
-            setName(`Anonymous ${nickname}`);
-
             mutate({
                 categories: categories,
                 score: score.score,
-                name: `Anonymous ${nickname}`,
+                name: name,
             });
             return true;
         });

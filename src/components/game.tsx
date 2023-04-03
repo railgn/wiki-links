@@ -17,6 +17,8 @@ import { useRouter } from "next/router";
 import io from "socket.io-client";
 import { Socket } from "socket.io";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
+import PlayerHUDs from "./playerHUDs";
+import { nicknames } from "../functions/nicknames";
 //@ts-ignore
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
 
@@ -33,6 +35,24 @@ export default function Game() {
 
     const [numberOfRounds, setNumberOfRounds] = useState(10);
     const [roundTime, setRoundTime] = useState(20);
+    const [name, setName] = useState("");
+    const [HUDinfo, setHUDinfo] = useState({
+        test: {
+            name: "test",
+            score: 0,
+            isLeader: false,
+            roundOver: false,
+            correct: false,
+        },
+    } as {
+        [key: string]: {
+            name: string;
+            score: number;
+            isLeader: boolean;
+            roundOver: boolean;
+            correct: boolean;
+        };
+    });
 
     const router = useRouter();
     const { pid } = router.query;
@@ -41,6 +61,12 @@ export default function Game() {
     useEffect(() => {
         setSocketConnect((newestSocketConnectValue) => {
             if (!newestSocketConnectValue) return false;
+
+            const nickname =
+                nicknames[Math.floor(nicknames.length * Math.random())];
+
+            setName(`Anonymous ${nickname}`);
+
             console.log("socket running");
             fetch("/api/socket").finally(() => {
                 //@ts-ignore
@@ -126,6 +152,11 @@ export default function Game() {
                     setIsLeader(false);
                     localLeader = false;
                 });
+
+                socket.on("pull player info", (all_players_Obj) => {
+                    console.log("pulled player info");
+                    setHUDinfo(all_players_Obj);
+                });
             });
 
             return false;
@@ -157,6 +188,29 @@ export default function Game() {
             socket.emit("post round", pid, score.round);
         }
     }, [score.round]);
+
+    //post info to server for HUD
+    useEffect(() => {
+        if (socket) {
+            console.log("post player info");
+            socket.emit(
+                "post player info",
+                pid,
+                name,
+                score.score,
+                isLeader,
+                score.round_over,
+                score.correct_answer
+            );
+        }
+    }, [
+        score.score,
+        isLeader,
+        name,
+        isSpectator,
+        score.round_over,
+        score.correct_answer,
+    ]);
 
     //round number event
     useEffect(() => {
@@ -209,7 +263,18 @@ export default function Game() {
 
     //reset article on new round before http request
     useEffect(() => {
-        setAnswerChoices(default_answerChoices);
+        if (isLeader) {
+            setAnswerChoices(default_answerChoices);
+        } else {
+            setScore({
+                score: score.score,
+                correct_answer: false,
+                round: score.round,
+                submission: "waiting",
+                round_over: false,
+                streak: score.streak,
+            });
+        }
     }, [score.round]);
 
     //handle submissions
@@ -485,9 +550,15 @@ export default function Game() {
                         link={link}
                         setLink={setLink}
                         filter={filter}
+                        name={name}
                     />
                 </>
             )}
+
+            {/* add name text input for changing name state */}
+
+            {/* HUD for all players */}
+            {socket && <PlayerHUDs players={HUDinfo} />}
         </>
     );
 }
