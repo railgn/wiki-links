@@ -1,3 +1,5 @@
+import { Game } from "../functions/game";
+
 type Props = {
     name: string;
     score: number;
@@ -5,6 +7,7 @@ type Props = {
     roundOver: boolean;
     correct: boolean;
     key: number;
+    game: Game;
 };
 
 export default function PlayerHUD({
@@ -14,13 +17,29 @@ export default function PlayerHUD({
     isLeader,
     roundOver,
     correct,
+    game,
 }: Props) {
     return (
         <div key={key}>
-            {name}
-            {isLeader && <>&#128081;</>} <div /> Score: {score} <div /> Finished
-            Round?: {roundOver ? "Yes" : "No"} <div /> Correct:{" "}
-            {correct ? <>&#128994;</> : <>&#128308;</>}
+            <div>
+                {name}
+                &nbsp;
+                {isLeader && <>&#128081;</>}
+            </div>
+            <div>
+                Score: {score} &nbsp;
+                {!game.filter_select &&
+                    !game.game_over &&
+                    (roundOver ? (
+                        correct ? (
+                            <>&#128994;</>
+                        ) : (
+                            <>&#128308;</>
+                        )
+                    ) : (
+                        <></>
+                    ))}
+            </div>
         </div>
     );
 }

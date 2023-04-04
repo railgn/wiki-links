@@ -93,7 +93,9 @@ export default function Timer({
         if (score.correct_answer) {
             setScore({
                 ...score,
-                score: score.score + 100 * parseInt(timer),
+                score:
+                    score.score +
+                    1000 * Math.round(parseInt(timer) / roundTime),
                 streak: score.streak + 1,
             });
             setEndText(`You earned ${parseInt(win_time) * 100} points!`);

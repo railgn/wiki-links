@@ -64,6 +64,15 @@ const ioHandler = (req, res) => {
                             socketObj[pid]!.leader = { [id]: socket };
                             socket.emit("become leader");
                         }
+
+                        const leaderID = Object.keys(
+                            socketObj[pid]!.leader
+                        )[0] as string;
+                        if (!socketObj[pid]!.leader[leaderID]) {
+                            delete socketObj[pid]!.leader[leaderID];
+                            socketObj[pid]!.leader[socket.id] = socket;
+                            socket.emit("become leader");
+                        }
                     }
                 } else {
                     socketObj[pid] = {
@@ -252,6 +261,15 @@ const ioHandler = (req, res) => {
                 };
                 socket.emit("become player handshake");
                 if (Object.keys(socketObj[pid]!.leader).length === 0) {
+                    socketObj[pid]!.leader[socket.id] = socket;
+                    socket.emit("become leader");
+                }
+
+                const leaderID = Object.keys(
+                    socketObj[pid]!.leader
+                )[0] as string;
+                if (!socketObj[pid]!.leader[leaderID]) {
+                    delete socketObj[pid]!.leader[leaderID];
                     socketObj[pid]!.leader[socket.id] = socket;
                     socket.emit("become leader");
                 }

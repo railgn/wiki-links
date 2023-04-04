@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { api } from "../utils/api";
 import { useState } from "react";
 import { default_filters } from "../functions/filter";
@@ -19,6 +19,7 @@ import { Socket } from "socket.io";
 import { DefaultEventsMap } from "@socket.io/component-emitter";
 import PlayerHUDs from "./playerHUDs";
 import { nicknames } from "../functions/nicknames";
+import { NameContext } from "../context/NameContext";
 //@ts-ignore
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
 
@@ -35,7 +36,12 @@ export default function Game() {
 
     const [numberOfRounds, setNumberOfRounds] = useState(10);
     const [roundTime, setRoundTime] = useState(20);
-    const [name, setName] = useState("");
+
+    const { name, setName } = useContext(NameContext);
+
+    const router = useRouter();
+    const { pid } = router.query;
+
     const [HUDinfo, setHUDinfo] = useState({
         test: {
             name: "test",
@@ -54,18 +60,17 @@ export default function Game() {
         };
     });
 
-    const router = useRouter();
-    const { pid } = router.query;
-
     //socket event listeners
     useEffect(() => {
         setSocketConnect((newestSocketConnectValue) => {
             if (!newestSocketConnectValue) return false;
 
-            const nickname =
-                nicknames[Math.floor(nicknames.length * Math.random())];
+            if (name === "") {
+                const nickname =
+                    nicknames[Math.floor(nicknames.length * Math.random())];
 
-            setName(`Anonymous ${nickname}`);
+                setName(`Anonymous ${nickname}`);
+            }
 
             console.log("socket running");
             fetch("/api/socket").finally(() => {
@@ -320,6 +325,18 @@ export default function Game() {
         socket.emit("become spectator", pid);
     };
 
+    const readyForNextRound = () => {
+        let res = true;
+
+        for (const id in HUDinfo) {
+            if (HUDinfo[id]?.roundOver === false) {
+                res = false;
+            }
+        }
+
+        return res;
+    };
+
     const spectator_indicator = isSpectator
         ? "SPECTATOR"
         : isLeader
@@ -504,7 +521,7 @@ export default function Game() {
 
                     <div className={styles.verticalPadding}></div>
 
-                    {score.round_over && isLeader && (
+                    {score.round_over && isLeader && readyForNextRound() && (
                         <div>
                             <button
                                 disabled={!isLeader}
@@ -527,7 +544,7 @@ export default function Game() {
                                     categorySelect(setScore, game, setGame)
                                 }
                             >
-                                Category Select
+                                Lobby Options
                             </button>
                         </div>
                     )}
@@ -539,6 +556,10 @@ export default function Game() {
                     </div> */}
                 </>
             )}
+
+            {/* HUD for all players */}
+            {socket && <PlayerHUDs players={HUDinfo} name={name} game={game} />}
+
             {/* game end */}
             {game.game_over && (
                 <>
@@ -551,14 +572,11 @@ export default function Game() {
                         setLink={setLink}
                         filter={filter}
                         name={name}
+                        isLeader={isLeader}
+                        isSpectator={isSpectator}
                     />
                 </>
             )}
-
-            {/* add name text input for changing name state */}
-
-            {/* HUD for all players */}
-            {socket && <PlayerHUDs players={HUDinfo} />}
         </>
     );
 }
