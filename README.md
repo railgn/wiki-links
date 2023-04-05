@@ -1,5 +1,11 @@
-WIP
+To-do:
 
-finish single player version
+-Add debounce to buttons
+-Only render page when answer choices !== "" && article title !== ""
 
-add lobbies, multiplayer with websockets
+-add an event emitter on connection that sets a `Connected` state on the component. Dont the game unless `connected === true`
+
+-decode HTML escape. look for library
+
+starts with "&"
+ends with ";"

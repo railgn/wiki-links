@@ -5,6 +5,7 @@ type Props = {
     filter: Filter;
     category: Category;
     mykey: number;
+    isLeader: boolean;
 };
 
 export default function Checkbox({
@@ -12,6 +13,7 @@ export default function Checkbox({
     filter,
     category,
     mykey,
+    isLeader,
 }: Props) {
     return (
         <div key={mykey}>
@@ -20,6 +22,8 @@ export default function Checkbox({
                     type="checkbox"
                     name={category}
                     defaultChecked={filter[category]}
+                    checked={filter[category]}
+                    disabled={!isLeader}
                     onClick={() => {
                         setFilter({
                             ...filter,

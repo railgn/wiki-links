@@ -2,16 +2,19 @@ import { Score } from "./score";
 import { Link } from "./link";
 import { Filter } from "./filter";
 import { generate_category } from "./filter";
+import { default_score } from "./score";
 
 export type Game = {
     filter_select: boolean;
+    game_over: boolean;
 };
 
 export const default_game: Game = {
     filter_select: true,
+    game_over: false,
 };
 
-export default function startGame(
+export function startGame(
     score: Score,
     setScore: (score: Score) => void,
     link: Link,
@@ -21,11 +24,12 @@ export default function startGame(
     setGame: (game: Game) => void
 ) {
     setScore({
-        score: score.score,
+        score: 0,
         correct_answer: false,
-        round: score.round + 1,
-        submission: "",
+        round: 1,
+        submission: "waiting",
         round_over: false,
+        streak: 0,
     });
 
     setLink({
@@ -35,7 +39,40 @@ export default function startGame(
     });
 
     setGame({
-        ...game,
+        game_over: false,
+        filter_select: false,
+    });
+}
+
+export function startGame_nonLeader(
+    score: Score,
+    setScore: (score: Score) => void
+) {
+    setScore({
+        score: 0,
+        correct_answer: false,
+        round: 1,
+        submission: "waiting",
+        round_over: false,
+        streak: 0,
+    });
+}
+
+export function categorySelect(
+    setScore: (score: Score) => void,
+    game: Game,
+    setGame: (game: Game) => void
+) {
+    setScore(default_score);
+    setGame({
+        game_over: false,
+        filter_select: true,
+    });
+}
+
+export function gameOver(setGame: (game: Game) => void) {
+    setGame({
+        game_over: true,
         filter_select: false,
     });
 }

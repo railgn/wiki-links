@@ -29,6 +29,7 @@ export default function getAnchors(html: string) {
         "issn",
         "title",
         "video game",
+        "terms of use",
 
         title,
     ];
