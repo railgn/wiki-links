@@ -1,10 +1,10 @@
-import { Category } from "./filter";
+import type { Category } from "./filter";
 
-export type Link = {
+export interface Link {
     fetch: boolean;
     category: Category;
     html: string;
-};
+}
 
 export const defaultLink: Link = {
     fetch: false,

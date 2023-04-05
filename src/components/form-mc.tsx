@@ -1,35 +1,35 @@
-import { Score } from "../functions/score";
 import { useEffect, useState } from "react";
-import Button from "./button";
 
-type Props = {
+import type { Score } from "@lib/score";
+
+import Button, { type ButtonReturn } from "./button";
+
+interface Props {
     setScore: (score: Score) => void;
     score: Score;
-    correct_anchors: string[];
-    incorrect_anchor: string;
+    correctAnchors: string[];
+    incorrectAnchor: string;
     mainArticle: string;
     subArticle: string;
     isSpectator: boolean;
-};
-
-export type ButtonReturn = "correct" | "incorrect" | "waiting";
+}
 
 export default function FormMC({
     setScore,
     score,
-    correct_anchors,
-    incorrect_anchor,
+    correctAnchors,
+    incorrectAnchor,
     mainArticle,
     subArticle,
     isSpectator,
 }: Props) {
-    const [buttonReturn, setButtonReturn] = useState("waiting" as ButtonReturn);
+    const [buttonReturn, setButtonReturn] = useState<ButtonReturn>("waiting");
     const [buttonOrder, setButtonOrder] = useState([0, 1, 2, 3]);
 
     useEffect(() => {
         const buttonLength = 4;
         const result: number[] = [];
-        const indexArr = new Array(buttonLength).fill(0).map((elem, i) => i);
+        const indexArr = new Array(buttonLength).fill(0).map((_, i) => i);
 
         for (let i = 0; i < buttonLength; i++) {
             const index = indexArr[
@@ -45,8 +45,8 @@ export default function FormMC({
     }, [score.round]);
 
     const renderButtons = (
-        correct_anchors: string[],
-        incorrect_anchor: string
+        correctAnchors: string[],
+        incorrectAnchor: string
     ) => {
         const buttonInfo: [
             {
@@ -57,14 +57,14 @@ export default function FormMC({
             }
         ] = [
             {
-                display: incorrect_anchor,
+                display: incorrectAnchor,
                 answer: "correct",
                 article: subArticle,
                 color: "green",
             },
         ];
 
-        for (const anchor of correct_anchors) {
+        for (const anchor of correctAnchors) {
             buttonInfo.push({
                 display: anchor,
                 answer: "incorrect",
@@ -78,18 +78,16 @@ export default function FormMC({
         let key = 1;
 
         for (let i = 0; i < buttonInfo.length; i++) {
+            // SAFETY: we are guaranteed this is the same length.
+            const info = buttonInfo[buttonOrder[i]!]!;
             result.push(
                 <div>
                     <Button
                         setButtonReturn={setButtonReturn}
-                        // @ts-ignore
-                        buttonReturn={buttonInfo[buttonOrder[i]].answer}
-                        // @ts-ignore
-                        display={buttonInfo[buttonOrder[i]].display}
-                        // @ts-ignore
-                        article={buttonInfo[buttonOrder[i]].article}
-                        // @ts-ignore
-                        color={buttonInfo[buttonOrder[i]].color}
+                        buttonReturn={info.answer}
+                        display={info.display}
+                        article={info.article}
+                        color={info.color}
                         roundOver={score.round_over}
                         mykey={key}
                         isSpectator={isSpectator}
@@ -102,7 +100,7 @@ export default function FormMC({
         return <>{result}</>;
     };
 
-    //set score state on change
+    // set score state on change
     useEffect(() => {
         if (!score.round_over && !score.correct_answer) {
             console.log(buttonReturn);
@@ -113,24 +111,23 @@ export default function FormMC({
                 streak: buttonReturn === "incorrect" ? 0 : score.streak,
             });
         }
+        // eslint-disable-next-line
     }, [buttonReturn]);
 
-    //reset buttonReturn
+    // reset buttonReturn
     useEffect(() => {
         setButtonReturn("waiting");
     }, [score.round]);
 
     const empty = () => {
-        return correct_anchors.filter((elem) => elem == "").length > 0;
+        return correctAnchors.filter((elem) => elem === "").length > 0;
     };
 
     return (
         <>
             {!empty() && (
                 <>
-                    <div>
-                        {renderButtons(correct_anchors, incorrect_anchor)}
-                    </div>
+                    <div>{renderButtons(correctAnchors, incorrectAnchor)}</div>
                 </>
             )}
         </>

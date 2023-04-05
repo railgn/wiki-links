@@ -1,6 +1,6 @@
-import { Game } from "../functions/game";
+import type { Game } from "@lib/game";
 
-type Props = {
+interface Props {
     name: string;
     score: number;
     isLeader: boolean;
@@ -8,7 +8,7 @@ type Props = {
     correct: boolean;
     key: number;
     game: Game;
-};
+}
 
 export default function PlayerHUD({
     name,

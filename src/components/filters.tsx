@@ -1,12 +1,12 @@
-import React from "react";
-import { Filter, Category } from "../functions/filter";
+import type { Filter, Category } from "@lib/filter";
+
 import Checkbox from "./checkbox";
 
-type Props = {
+interface Props {
     setFilter: (state: Filter) => void;
     filter: Filter;
     isLeader: boolean;
-};
+}
 
 export default function Filters({ setFilter, filter, isLeader }: Props) {
     const renderFilters = (filter: Filter) => {

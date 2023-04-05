@@ -1,7 +1,7 @@
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 import { NameContext } from "../context/NameContext";
 
-export const NameProvider = ({ children }: { children: ReactNode }) => {
+export const NameProvider = ({ children }: { children: JSX.Element }) => {
     const [name, setName] = useState("");
 
     return (

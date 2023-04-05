@@ -1,14 +1,13 @@
-import { useState } from "react";
-import { HighScoreType } from "../functions/highscore";
+import type { HighScore } from "@lib/highscore";
 import styles from "../styles/score.module.css";
 
-type Props = {
-    highscore: HighScoreType;
+interface Props {
+    highscore?: HighScore;
     name: string;
     score: number;
     categories: string;
     mykey: number;
-};
+}
 
 export default function Score({
     highscore,
@@ -30,14 +29,14 @@ export default function Score({
     const date = highscore?.date;
 
     const dateFormat = (date: Date) => {
-        var mm = date.getMonth() + 1;
-        var dd = date.getDate();
+        const mm = date.getMonth() + 1;
+        const dd = date.getDate();
 
         return [mm, dd, date.getFullYear()].join("-");
     };
 
     let dateDisplay = "";
-    if (date) {
+    if (date != null) {
         dateDisplay = dateFormat(date);
     }
 

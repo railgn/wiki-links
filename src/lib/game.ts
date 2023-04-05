@@ -1,15 +1,15 @@
-import { Score } from "./score";
-import { Link } from "./link";
-import { Filter } from "./filter";
-import { generate_category } from "./filter";
-import { default_score } from "./score";
+import type { Score } from "./score";
+import type { Link } from "./link";
+import type { Filter } from "./filter";
+import { generateCategory } from "./filter";
+import { defaultScore } from "./score";
 
-export type Game = {
+export interface Game {
     filter_select: boolean;
     game_over: boolean;
-};
+}
 
-export const default_game: Game = {
+export const defaultGame: Game = {
     filter_select: true,
     game_over: false,
 };
@@ -34,7 +34,7 @@ export function startGame(
 
     setLink({
         ...link,
-        category: generate_category(filter),
+        category: generateCategory(filter),
         fetch: !link.fetch,
     });
 
@@ -44,7 +44,7 @@ export function startGame(
     });
 }
 
-export function startGame_nonLeader(
+export function startGameNonLeader(
     score: Score,
     setScore: (score: Score) => void
 ) {
@@ -63,7 +63,7 @@ export function categorySelect(
     game: Game,
     setGame: (game: Game) => void
 ) {
-    setScore(default_score);
+    setScore(defaultScore);
     setGame({
         game_over: false,
         filter_select: true,

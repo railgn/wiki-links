@@ -1,12 +1,12 @@
-import { HighScoreType } from "../functions/highscore";
+import type { HighScore } from "@lib/highscore";
 import Score from "./score";
 
-type Props = {
-    highscores: HighScoreType[];
+interface Props {
+    highscores: HighScore[];
     name: string;
     score: number;
     categories: string;
-};
+}
 
 export default function HighScores({
     highscores,
@@ -15,7 +15,7 @@ export default function HighScores({
     categories,
 }: Props) {
     const renderHighScores = (
-        highscores: HighScoreType[],
+        highscores: HighScore[],
         name: string,
         score: number,
         categories: string

@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
-import { Filter } from "../functions/filter";
-import { Game, categorySelect, startGame } from "../functions/game";
-import { Link } from "../functions/link";
-import { Score } from "../functions/score";
+
+import type { Category, Filter } from "@lib/filter";
+import { type Game, categorySelect, startGame } from "@lib/game";
+import type { HighScore } from "@lib/highscore";
+import type { Link } from "@lib/link";
+import type { Score } from "@lib/score";
+
 import { api } from "../utils/api";
+
 import HighScores from "./highscores";
-import { HighScoreType } from "../functions/highscore";
 import styles from "../styles/gameOver.module.css";
 
-type Props = {
+interface Props {
     score: Score;
     game: Game;
     setGame: (game: Game) => void;
@@ -19,7 +22,7 @@ type Props = {
     name: string;
     isLeader: boolean;
     isSpectator: boolean;
-};
+}
 
 export default function GameOver({
     score,
@@ -34,19 +37,20 @@ export default function GameOver({
     isSpectator,
 }: Props) {
     const [postScore, setPostScore] = useState(false);
-    const [highScores, setHighScores] = useState([{} as HighScoreType]);
+    const [highScores, setHighScores] = useState<HighScore[]>([]);
     const [categoryState, setCategoryState] = useState("");
     const [fetchScores, setFetchScores] = useState(false);
 
-    //post score to database
+    // post score to database
 
     const { mutate } = api.example.postScore.useMutation({
         retry: false,
-        onSuccess(data) {
+        onSuccess(_data) {
             setFetchScores(true);
         },
     });
 
+    // TODO: check if isSpectator should be in deps array
     useEffect(() => {
         if (isSpectator) {
             setFetchScores(true);
@@ -55,13 +59,13 @@ export default function GameOver({
 
     useEffect(() => {
         setPostScore((newestPostScoreValue) => {
-            if (!(game.game_over && !newestPostScoreValue) || isSpectator)
+            if (!(game.game_over && !newestPostScoreValue) || isSpectator) {
                 return false;
+            }
 
             const categories: string[] = [];
 
-            for (const category in filter) {
-                //@ts-ignore
+            for (const category of Object.keys(filter) as Category[]) {
                 if (filter[category]) {
                     categories.push(category);
                 }
@@ -76,15 +80,15 @@ export default function GameOver({
             console.log("posting score to DB");
 
             mutate({
-                categories: categories,
+                categories,
+                name,
                 score: score.score,
-                name: name,
             });
             return true;
         });
     }, [game.game_over]);
 
-    //retrieve top 10 scores from database
+    // retrieve top 10 scores from database
 
     const getScores = api.example.getScores.useQuery(
         {

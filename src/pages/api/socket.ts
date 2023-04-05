@@ -1,43 +1,39 @@
-import { Server, Socket } from "socket.io";
-import { Category, Filter, default_filters } from "../../functions/filter";
-import {
-    AnswerChoices,
-    default_answerChoices,
-} from "../../functions/answer_choices";
-import { Game, default_game } from "../../functions/game";
+import { Server, type Socket } from "socket.io";
+import { type Category, type Filter, defaultFilters } from "@lib/filter";
+import { type AnswerChoices, defaultAnswerChoices } from "@lib/answer_choices";
+import { type Game, defaultGame } from "@lib/game";
 
-type SocketHash = {
-    [pid: string]: {
-        leader: { [key: string]: Socket };
-        all_sockets: { [key: string]: Socket };
-        all_players: {
-            [key: string]: {
-                socket: Socket;
-                name: string;
-                score: number;
-                isLeader: boolean;
-                roundOver: boolean;
-                correct: boolean;
-            };
-        };
-        filter: Filter;
-        answerChoices: AnswerChoices;
-        category: Category;
-        game: Game;
-        deadline: Date;
-        round: number;
-        numberOfRounds: number;
-        roundTime: number;
-    };
-};
+interface SocketHash {
+    leader: Record<string, Socket>;
+    all_sockets: Record<string, Socket>;
+    all_players: Record<string, Player>;
+    filter: Filter;
+    answerChoices: AnswerChoices;
+    category: Category;
+    game: Game;
+    deadline: Date;
+    round: number;
+    numberOfRounds: number;
+    roundTime: number;
+}
 
-//@ts-ignore
+type SocketMap = Record<string, SocketHash>;
+interface Player {
+    socket: Socket;
+    name: string;
+    score: number;
+    isLeader: boolean;
+    roundOver: boolean;
+    correct: boolean;
+}
+
+// @ts-expect-error
 const ioHandler = (req, res) => {
     if (!res.socket.server.io) {
         console.log("*First use, starting socket.io");
 
         const io = new Server(res.socket.server);
-        const socketObj: SocketHash = {};
+        const socketObj: SocketMap = {};
 
         io.on("connection", (socket) => {
             socket.on("pid", (pid) => {
@@ -88,10 +84,10 @@ const ioHandler = (req, res) => {
                                 correct: false,
                             },
                         },
-                        filter: default_filters,
-                        answerChoices: default_answerChoices,
+                        filter: defaultFilters,
+                        answerChoices: defaultAnswerChoices,
                         category: "Natural sciences" as Category,
-                        game: default_game,
+                        game: defaultGame,
                         deadline: new Date(),
                         round: 0,
                         numberOfRounds: 10,

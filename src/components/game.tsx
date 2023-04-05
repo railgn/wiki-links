@@ -1,25 +1,32 @@
-import React, { useContext, useEffect } from "react";
-import { api } from "../utils/api";
-import { useState } from "react";
-import { default_filters } from "../functions/filter";
-import Filters from "./filters";
-import { default_score } from "../functions/score";
-import nextRound from "../functions/score";
-import FormMC from "./form-mc";
-import { defaultLink } from "../functions/link";
-import Timer from "./timer";
-import { default_game, gameOver, startGame_nonLeader } from "../functions/game";
-import { startGame, categorySelect } from "../functions/game";
-import { default_answerChoices } from "../functions/answer_choices";
-import styles from "../styles/game.module.css";
-import GameOver from "./game_over";
+import { useState, useContext, useEffect } from "react";
 import { useRouter } from "next/router";
+import type { Socket } from "socket.io";
+import type { DefaultEventsMap } from "@socket.io/component-emitter";
 import io from "socket.io-client";
-import { Socket } from "socket.io";
-import { DefaultEventsMap } from "@socket.io/component-emitter";
-import PlayerHUDs from "./playerHUDs";
-import { nicknames } from "../functions/nicknames";
+
+import { defaultAnswerChoices } from "@lib/answer_choices";
+import { defaultFilters } from "@lib/filter";
+import {
+    startGame,
+    categorySelect,
+    defaultGame,
+    gameOver,
+    startGameNonLeader,
+} from "@lib/game";
+import { defaultLink } from "@lib/link";
+import { nicknames } from "@lib/nicknames";
+import nextRound, { defaultScore } from "@lib/score";
+
+import { api } from "../utils/api";
 import { NameContext } from "../context/NameContext";
+
+import Filters from "./filters";
+import FormMC from "./form-mc";
+import Timer from "./timer";
+import GameOver from "./game_over";
+import PlayerHUDs from "./playerHUDs";
+import styles from "../styles/game.module.css";
+
 //@ts-ignore
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
 
@@ -27,11 +34,11 @@ export default function Game() {
     const [isLeader, setIsLeader] = useState(false);
     const [isSpectator, setIsSpectator] = useState(true);
 
-    const [game, setGame] = useState(default_game);
-    const [filter, setFilter] = useState(default_filters);
+    const [game, setGame] = useState(defaultGame);
+    const [filter, setFilter] = useState(defaultFilters);
     const [link, setLink] = useState(defaultLink);
-    const [score, setScore] = useState(default_score);
-    const [answerChoices, setAnswerChoices] = useState(default_answerChoices);
+    const [score, setScore] = useState(defaultScore);
+    const [answerChoices, setAnswerChoices] = useState(defaultAnswerChoices);
     const [socketConnect, setSocketConnect] = useState(true);
 
     const [numberOfRounds, setNumberOfRounds] = useState(10);
@@ -60,7 +67,7 @@ export default function Game() {
         };
     });
 
-    //socket event listeners
+    // socket event listeners
     useEffect(() => {
         setSocketConnect((newestSocketConnectValue) => {
             if (!newestSocketConnectValue) return false;
@@ -126,7 +133,7 @@ export default function Game() {
                         setGame(game_server);
 
                         if (!game_server.game_over) {
-                            startGame_nonLeader(score, setScore);
+                            startGameNonLeader(score, setScore);
                         }
                     }
                 });
@@ -269,7 +276,7 @@ export default function Game() {
     //reset article on new round before http request
     useEffect(() => {
         if (isLeader) {
-            setAnswerChoices(default_answerChoices);
+            setAnswerChoices(defaultAnswerChoices);
         } else {
             setScore({
                 score: score.score,
@@ -511,8 +518,8 @@ export default function Game() {
                         <FormMC
                             setScore={setScore}
                             score={score}
-                            correct_anchors={answerChoices.incorrect}
-                            incorrect_anchor={answerChoices.correct}
+                            correctAnchors={answerChoices.incorrect}
+                            incorrectAnchor={answerChoices.correct}
                             mainArticle={answerChoices.mainArticle}
                             subArticle={answerChoices.subArticle}
                             isSpectator={isSpectator}

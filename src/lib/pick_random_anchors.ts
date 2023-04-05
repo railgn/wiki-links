@@ -14,7 +14,7 @@ export default function pickRandomAnchors(anchors: string[], count: number) {
 }
 
 function unique(arr: string[]) {
-    const seen: { [key: string]: boolean } = {};
+    const seen: Record<string, boolean> = {};
 
     return arr.filter((elem) => {
         if (seen.hasOwnProperty(elem)) {

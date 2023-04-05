@@ -1,8 +1,10 @@
-import { ButtonReturn } from "./form-mc";
-import encodeURL from "../functions/encode_url";
+import encodeURL from "@lib/encode_url";
+
 import styles from "../styles/button.module.css";
 
-type Props = {
+export type ButtonReturn = "correct" | "incorrect" | "waiting";
+
+interface Props {
     setButtonReturn: (state: ButtonReturn) => void;
     buttonReturn: ButtonReturn;
     display: string;
@@ -11,7 +13,7 @@ type Props = {
     roundOver: boolean;
     mykey: number;
     isSpectator: boolean;
-};
+}
 
 export default function Button({
     setButtonReturn,
@@ -54,7 +56,7 @@ export default function Button({
                     </button>
                     &nbsp; &nbsp;
                     {roundOver && (
-                        <a href={articleURL} target="_blank">
+                        <a href={articleURL} target="_blank" rel="noreferrer">
                             {article}
                         </a>
                     )}

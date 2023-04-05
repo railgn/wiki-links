@@ -1,36 +1,26 @@
+import { type Game, gameOver } from "@lib/game";
+
 import PlayerHUD from "./playerHUD";
 import styles from "../styles/playerHUDs.module.css";
-import { Game, gameOver } from "../functions/game";
 
-type Props = {
-    players: {
-        [key: string]: {
-            name: string;
-            score: number;
-            isLeader: boolean;
-            roundOver: boolean;
-            correct: boolean;
-        };
-    };
+type Players = Record<string, Player>;
+interface Player {
     name: string;
+    score: number;
+    isLeader: boolean;
+    roundOver: boolean;
+    correct: boolean;
+}
 
+interface Props {
+    players: Players;
+    name: string;
     game: Game;
-};
+}
 
 export default function PlayerHUDs({ players, name, game }: Props) {
-    const renderHUD = (
-        players: {
-            [key: string]: {
-                name: string;
-                score: number;
-                isLeader: boolean;
-                roundOver: boolean;
-                correct: boolean;
-            };
-        },
-        game: Game
-    ) => {
-        let result = [];
+    const renderHUD = (players: Players, game: Game) => {
+        const result = [];
         let key = 1;
         for (const id in players) {
             if (players[id]?.name === name) {

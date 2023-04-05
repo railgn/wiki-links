@@ -1,17 +1,16 @@
-import { Link } from "./link";
-import { generate_category } from "./filter";
-import { Filter } from "./filter";
+import type { Link } from "./link";
+import { type Filter, generateCategory } from "./filter";
 
-export type Score = {
+export interface Score {
     score: number;
     round: number;
     submission: string;
     correct_answer: boolean;
     round_over: boolean;
     streak: number;
-};
+}
 
-export const default_score: Score = {
+export const defaultScore: Score = {
     score: 0,
     round: 0,
     submission: "",
@@ -38,7 +37,7 @@ export default function nextRound(
 
     setLink({
         ...link,
-        category: generate_category(filter),
+        category: generateCategory(filter),
         fetch: !link.fetch,
     });
 }
