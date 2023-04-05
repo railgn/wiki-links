@@ -1,6 +1,7 @@
 import { z } from "zod";
 import pickRandomAnchors from "@lib/pick_random_anchors";
 import checkUnique from "@lib/unique_arr";
+import { decode } from "html-entities";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
 import { PrismaClient } from "@prisma/client";
@@ -51,9 +52,11 @@ export const exampleRouter = createTRPCRouter({
 
             const mainArticleAnswers = pickRandomAnchors(mainArticleLinks, 3);
 
-            const subArticleAnswer = subArticleLinks[
-                Math.floor(subArticleLinks.length * Math.random())
-            ] as string;
+            const subArticleAnswer = decode(
+                subArticleLinks[
+                    Math.floor(subArticleLinks.length * Math.random())
+                ]
+            ) as string;
 
             return {
                 mainArticle,

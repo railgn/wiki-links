@@ -118,6 +118,8 @@ const ioHandler = (req, res) => {
                 }
                 console.log(`user connected on ${pid}`);
                 console.log(socketObj[pid]);
+
+                socket.emit("connect state");
             });
 
             socket.on("post filter", (pid, filter) => {

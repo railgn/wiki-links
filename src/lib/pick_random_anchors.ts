@@ -1,3 +1,5 @@
+import { decode } from "html-entities";
+
 export default function pickRandomAnchors(anchors: string[], count: number) {
     const arr = unique(anchors);
     const result: string[] = [];
@@ -5,7 +7,7 @@ export default function pickRandomAnchors(anchors: string[], count: number) {
     for (let i = 0; i < count; i++) {
         const anchor = arr[Math.floor(Math.random() * arr.length)];
 
-        result.push(anchor as string);
+        result.push(decode(anchor) as string);
 
         arr.splice(arr.indexOf(anchor as string), 1);
     }

@@ -95,10 +95,14 @@ export default function Timer({
                 ...score,
                 score:
                     score.score +
-                    1000 * Math.round(parseInt(timer) / roundTime),
+                    Math.round((1000 * parseInt(timer)) / roundTime),
                 streak: score.streak + 1,
             });
-            setEndText(`You earned ${parseInt(winTime) * 100} points!`);
+            setEndText(
+                `You earned ${Math.round(
+                    (1000 * parseInt(timer)) / roundTime
+                )} points!`
+            );
         } else {
             setEndText(`Incorrect!`);
         }

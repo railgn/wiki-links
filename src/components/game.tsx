@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import type { Socket } from "socket.io";
 import type { DefaultEventsMap } from "@socket.io/component-emitter";
 import io from "socket.io-client";
+import { decode } from "html-entities";
 
 import { defaultAnswerChoices } from "@lib/answer_choices";
 import { defaultFilters } from "@lib/filter";
@@ -40,6 +41,7 @@ export default function Game() {
     const [score, setScore] = useState(defaultScore);
     const [answerChoices, setAnswerChoices] = useState(defaultAnswerChoices);
     const [socketConnect, setSocketConnect] = useState(true);
+    const [socketLoaded, setSocketLoaded] = useState(false);
 
     const [numberOfRounds, setNumberOfRounds] = useState(10);
     const [roundTime, setRoundTime] = useState(20);
@@ -67,6 +69,8 @@ export default function Game() {
         };
     });
 
+    console.log(socketConnect);
+
     // socket event listeners
     useEffect(() => {
         setSocketConnect((newestSocketConnectValue) => {
@@ -90,6 +94,10 @@ export default function Game() {
                 socket.on("connect", () => {
                     console.log(`connect on ${pid}`);
                     socket.emit("pid", pid);
+                });
+
+                socket.on("connect state", () => {
+                    setSocketLoaded(true);
                 });
 
                 socket.on("become leader", () => {
@@ -352,236 +360,273 @@ export default function Game() {
 
     return (
         <>
-            <div>
-                <h1>{spectator_indicator}</h1>
-            </div>
+            {!socketLoaded && <div>Loading ...</div>}
 
-            <div className={styles.verticalPadding}></div>
-
-            {/* category filters */}
-            {game.filter_select && (
+            {socketLoaded && (
                 <>
                     <div>
-                        <h3>Category Select</h3>
-                    </div>
-
-                    <div>
-                        <Filters
-                            setFilter={setFilter}
-                            filter={filter}
-                            isLeader={isLeader}
-                        />
+                        <h1>{spectator_indicator}</h1>
                     </div>
 
                     <div className={styles.verticalPadding}></div>
-                    {isSpectator && (
-                        <button onClick={() => becomePlayer()}>
-                            Become a Player
-                        </button>
-                    )}
-                    {!isSpectator && (
-                        <>
-                            <button onClick={() => becomeSpectator()}>
-                                Become a Spectator
-                            </button>
-                        </>
-                    )}
 
-                    <div className={styles.verticalPadding}></div>
-
-                    {/* game options */}
-                    {isLeader && (
+                    {/* category filters */}
+                    {game.filter_select && (
                         <>
                             <div>
-                                Number of Rounds
-                                <label>
-                                    <input
-                                        type="radio"
-                                        name="5-numberOfRounds"
-                                        value="5"
-                                        checked={numberOfRounds === 5}
-                                        onChange={handleNumberOfRounds}
-                                    />
-                                    5
-                                </label>
-                                <label>
-                                    <input
-                                        type="radio"
-                                        name="10-numberOfRounds"
-                                        value="10"
-                                        checked={numberOfRounds === 10}
-                                        onChange={handleNumberOfRounds}
-                                    />
-                                    10
-                                </label>
-                                <label>
-                                    <input
-                                        type="radio"
-                                        name="15-numberOfRounds"
-                                        value="15"
-                                        checked={numberOfRounds === 15}
-                                        onChange={handleNumberOfRounds}
-                                    />
-                                    15
-                                </label>
+                                <h3>Category Select</h3>
                             </div>
+
                             <div>
-                                Seconds per Round
-                                <label>
-                                    <input
-                                        type="radio"
-                                        name="10-roundTime"
-                                        value="10"
-                                        checked={roundTime === 10}
-                                        onChange={handleRoundTime}
-                                    />
-                                    10
-                                </label>
-                                <label>
-                                    <input
-                                        type="radio"
-                                        name="20-roundTime"
-                                        value="20"
-                                        checked={roundTime === 20}
-                                        onChange={handleRoundTime}
-                                    />
-                                    20
-                                </label>
-                                <label>
-                                    <input
-                                        type="radio"
-                                        name="30-roundTime"
-                                        value="30"
-                                        checked={roundTime === 30}
-                                        onChange={handleRoundTime}
-                                    />
-                                    30
-                                </label>
+                                <Filters
+                                    setFilter={setFilter}
+                                    filter={filter}
+                                    isLeader={isLeader}
+                                />
                             </div>
 
                             <div className={styles.verticalPadding}></div>
+                            {isSpectator && (
+                                <button onClick={() => becomePlayer()}>
+                                    Become a Player
+                                </button>
+                            )}
+                            {!isSpectator && (
+                                <>
+                                    <button onClick={() => becomeSpectator()}>
+                                        Become a Spectator
+                                    </button>
+                                </>
+                            )}
 
-                            <button
-                                disabled={!isLeader}
-                                onClick={() =>
-                                    startGame(
-                                        score,
-                                        setScore,
-                                        link,
-                                        setLink,
-                                        filter,
-                                        game,
-                                        setGame
-                                    )
-                                }
-                            >
-                                Start Game
-                            </button>
+                            <div className={styles.verticalPadding}></div>
+
+                            {/* game options */}
+                            {isLeader && (
+                                <>
+                                    <div>
+                                        Number of Rounds
+                                        <label>
+                                            <input
+                                                type="radio"
+                                                name="5-numberOfRounds"
+                                                value="5"
+                                                checked={numberOfRounds === 5}
+                                                onChange={handleNumberOfRounds}
+                                            />
+                                            5
+                                        </label>
+                                        <label>
+                                            <input
+                                                type="radio"
+                                                name="10-numberOfRounds"
+                                                value="10"
+                                                checked={numberOfRounds === 10}
+                                                onChange={handleNumberOfRounds}
+                                            />
+                                            10
+                                        </label>
+                                        <label>
+                                            <input
+                                                type="radio"
+                                                name="15-numberOfRounds"
+                                                value="15"
+                                                checked={numberOfRounds === 15}
+                                                onChange={handleNumberOfRounds}
+                                            />
+                                            15
+                                        </label>
+                                    </div>
+                                    <div>
+                                        Seconds per Round
+                                        <label>
+                                            <input
+                                                type="radio"
+                                                name="10-roundTime"
+                                                value="10"
+                                                checked={roundTime === 10}
+                                                onChange={handleRoundTime}
+                                            />
+                                            10
+                                        </label>
+                                        <label>
+                                            <input
+                                                type="radio"
+                                                name="20-roundTime"
+                                                value="20"
+                                                checked={roundTime === 20}
+                                                onChange={handleRoundTime}
+                                            />
+                                            20
+                                        </label>
+                                        <label>
+                                            <input
+                                                type="radio"
+                                                name="30-roundTime"
+                                                value="30"
+                                                checked={roundTime === 30}
+                                                onChange={handleRoundTime}
+                                            />
+                                            30
+                                        </label>
+                                    </div>
+
+                                    <div
+                                        className={styles.verticalPadding}
+                                    ></div>
+
+                                    <button
+                                        disabled={!isLeader}
+                                        onClick={() =>
+                                            startGame(
+                                                score,
+                                                setScore,
+                                                link,
+                                                setLink,
+                                                filter,
+                                                game,
+                                                setGame
+                                            )
+                                        }
+                                    >
+                                        Start Game
+                                    </button>
+                                </>
+                            )}
                         </>
                     )}
-                </>
-            )}
-            {/* game rounds */}
-            {!game.filter_select && !game.game_over && (
-                <>
-                    <div>
-                        <h3>Choose the link NOT found in the Wiki article</h3>
-                    </div>
-                    <div>Round: {score.round}</div>
-                    <div>Score: {score.score}</div>
-                    <div>Current Streak: {score.streak}</div>
+                    {/* game rounds */}
+                    {!game.filter_select && !game.game_over && (
+                        <>
+                            <div>
+                                <h3>
+                                    Choose the link NOT found in the Wiki
+                                    article
+                                </h3>
+                            </div>
+                            <div>Round: {score.round}</div>
+                            <div>Score: {score.score}</div>
+                            <div>Current Streak: {score.streak}</div>
 
-                    <div className={styles.verticalPadding}></div>
+                            <div className={styles.verticalPadding}></div>
 
-                    <div>
-                        Category:{" "}
-                        {answerChoices.mainArticle != ""
-                            ? link.category
-                            : link.category}
-                    </div>
-                    <div>Wiki Article: {answerChoices.mainArticle}</div>
+                            {answerChoices.mainArticle !== "" &&
+                                answerChoices.correct !== "" && (
+                                    <>
+                                        <div>
+                                            Category:{" "}
+                                            {answerChoices.mainArticle != ""
+                                                ? link.category
+                                                : link.category}
+                                        </div>
+                                        <div>
+                                            Wiki Article:{" "}
+                                            {decode(answerChoices.mainArticle)}
+                                        </div>
 
-                    <div>
-                        <Timer
-                            round={score.round}
-                            score={score}
-                            setScore={setScore}
-                            socket={socket}
-                            isLeader={isLeader}
-                            pid={pid as string}
-                            roundTime={roundTime}
-                        />
-                    </div>
+                                        <div>
+                                            <Timer
+                                                round={score.round}
+                                                score={score}
+                                                setScore={setScore}
+                                                socket={socket}
+                                                isLeader={isLeader}
+                                                pid={pid as string}
+                                                roundTime={roundTime}
+                                            />
+                                        </div>
 
-                    {/* submission input */}
-                    <div>
-                        <FormMC
-                            setScore={setScore}
-                            score={score}
-                            correctAnchors={answerChoices.incorrect}
-                            incorrectAnchor={answerChoices.correct}
-                            mainArticle={answerChoices.mainArticle}
-                            subArticle={answerChoices.subArticle}
-                            isSpectator={isSpectator}
-                        />
-                    </div>
+                                        {/* submission input */}
+                                        <div className={styles.transitionTest}>
+                                            <FormMC
+                                                setScore={setScore}
+                                                score={score}
+                                                correctAnchors={
+                                                    answerChoices.incorrect
+                                                }
+                                                incorrectAnchor={
+                                                    answerChoices.correct
+                                                }
+                                                mainArticle={
+                                                    answerChoices.mainArticle
+                                                }
+                                                subArticle={
+                                                    answerChoices.subArticle
+                                                }
+                                                isSpectator={isSpectator}
+                                            />
+                                        </div>
 
-                    <div className={styles.verticalPadding}></div>
+                                        <div
+                                            className={styles.verticalPadding}
+                                        ></div>
 
-                    {score.round_over && isLeader && readyForNextRound() && (
-                        <div>
-                            <button
-                                disabled={!isLeader}
-                                onClick={() =>
-                                    nextRound(
-                                        score,
-                                        setScore,
-                                        link,
-                                        setLink,
-                                        filter
-                                    )
-                                }
-                            >
-                                New Round
-                            </button>
-                            &nbsp; &nbsp;
-                            <button
-                                disabled={!isLeader}
-                                onClick={() =>
-                                    categorySelect(setScore, game, setGame)
-                                }
-                            >
-                                Lobby Options
-                            </button>
-                        </div>
-                    )}
+                                        {score.round_over &&
+                                            isLeader &&
+                                            readyForNextRound() && (
+                                                <div>
+                                                    <button
+                                                        disabled={!isLeader}
+                                                        onClick={() =>
+                                                            nextRound(
+                                                                score,
+                                                                setScore,
+                                                                link,
+                                                                setLink,
+                                                                filter
+                                                            )
+                                                        }
+                                                    >
+                                                        New Round
+                                                    </button>
+                                                    &nbsp; &nbsp;
+                                                    <button
+                                                        disabled={!isLeader}
+                                                        onClick={() =>
+                                                            categorySelect(
+                                                                setScore,
+                                                                game,
+                                                                setGame
+                                                            )
+                                                        }
+                                                    >
+                                                        Lobby Options
+                                                    </button>
+                                                </div>
+                                            )}
+                                    </>
+                                )}
 
-                    {/* answers for cheating
+                            {/* answers for cheating
 
                     <div>
                         (possible answers): {answerChoices.incorrect.join(", ")}
                     </div> */}
-                </>
-            )}
+                        </>
+                    )}
 
-            {/* HUD for all players */}
-            {socket && <PlayerHUDs players={HUDinfo} name={name} game={game} />}
+                    {/* HUD for all players */}
+                    {socket && (
+                        <PlayerHUDs players={HUDinfo} name={name} game={game} />
+                    )}
 
-            {/* game end */}
-            {game.game_over && (
-                <>
-                    <GameOver
-                        score={score}
-                        game={game}
-                        setGame={setGame}
-                        setScore={setScore}
-                        link={link}
-                        setLink={setLink}
-                        filter={filter}
-                        name={name}
-                        isLeader={isLeader}
-                        isSpectator={isSpectator}
-                    />
+                    {/* game end */}
+                    {game.game_over && (
+                        <>
+                            <GameOver
+                                score={score}
+                                game={game}
+                                setGame={setGame}
+                                setScore={setScore}
+                                link={link}
+                                setLink={setLink}
+                                filter={filter}
+                                name={name}
+                                isLeader={isLeader}
+                                isSpectator={isSpectator}
+                            />
+                        </>
+                    )}
                 </>
             )}
         </>
