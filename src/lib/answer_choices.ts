@@ -1,11 +1,11 @@
-export type AnswerChoices = {
+export interface AnswerChoices {
     mainArticle: string;
     subArticle: string;
     correct: string;
     incorrect: string[];
-};
+}
 
-export const default_answerChoices: AnswerChoices = {
+export const defaultAnswerChoices: AnswerChoices = {
     mainArticle: "",
     subArticle: "",
     correct: "",

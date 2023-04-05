@@ -1,10 +1,12 @@
 import { z } from "zod";
-import pickRandomAnchors from "../../../functions/pick_random_anchors";
-import checkUnique from "../../../functions/unique_arr";
+import pickRandomAnchors from "@lib/pick_random_anchors";
+import checkUnique from "@lib/unique_arr";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
 import { PrismaClient } from "@prisma/client";
-import { HighScoreType } from "../../../functions/highscore";
+import type { HighScore } from "@lib/highscore";
+
+import type { Data } from "@lib/types";
 
 const prisma = new PrismaClient();
 
@@ -19,9 +21,9 @@ export const exampleRouter = createTRPCRouter({
         .query(async ({ input }) => {
             const fileName: string = `${input.category}.json`;
 
-            const category: object = await import(`../../../data/${fileName}`);
+            const category: Data = await import(`../../../data/${fileName}`);
 
-            await new Promise((r) => setTimeout(r, 50));
+            await new Promise((resolve) => setTimeout(resolve, 50));
 
             const articles = Object.keys(category).filter((e) => e !== "error");
 
@@ -29,8 +31,7 @@ export const exampleRouter = createTRPCRouter({
                 Math.floor(articles.length * Math.random())
             ] as string;
 
-            //@ts-ignore
-            const mainArticleLinks = category[mainArticle].anchors as string[];
+            const mainArticleLinks = category[mainArticle]?.anchors as string[];
 
             const articlesWithoutMain = articles.filter(
                 (e) => e !== mainArticle
@@ -39,15 +40,13 @@ export const exampleRouter = createTRPCRouter({
             let subArticle = articlesWithoutMain[
                 Math.floor(articlesWithoutMain.length * Math.random())
             ] as string;
-            //@ts-ignore
-            let subArticleLinks = category[subArticle].anchors as string[];
+            let subArticleLinks = category[subArticle]?.anchors as string[];
 
             while (!checkUnique(mainArticleLinks, subArticleLinks)) {
                 subArticle = articlesWithoutMain[
                     Math.floor(articlesWithoutMain.length * Math.random())
                 ] as string;
-                //@ts-ignore
-                subArticleLinks = category[subArticle].anchors as string[];
+                subArticleLinks = category[subArticle]?.anchors as string[];
             }
 
             const mainArticleAnswers = pickRandomAnchors(mainArticleLinks, 3);
@@ -113,6 +112,6 @@ export const exampleRouter = createTRPCRouter({
                 return response.slice(0, 10);
             }
 
-            return [{} as HighScoreType];
+            return [{} as HighScore];
         }),
 });

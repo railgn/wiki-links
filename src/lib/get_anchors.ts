@@ -1,13 +1,13 @@
-//@ts-ignore
+// @ts-expect-error
 import JSSoup from "jssoup";
 
 export default function getAnchors(html: string) {
-    if (html == "hi") {
+    if (html === "hi") {
         return { title: "not ready", anchors: [] };
     }
     const soup = new JSSoup(JSON.parse(html));
 
-    let res: string[] = [];
+    const res: string[] = [];
 
     let title = soup.find("title").text;
     title = title.slice(0, title.length - 12);
@@ -35,10 +35,10 @@ export default function getAnchors(html: string) {
     ];
 
     for (const a of anchors) {
-        if (a.attrs.href) {
+        if (a.attrs.href != null) {
             if (
                 a.attrs.href.includes("/wiki/") &&
-                a.attrs.href.indexOf(":") == -1 &&
+                a.attrs.href.indexOf(":") === -1 &&
                 !falsePositives.includes(a.text) &&
                 !a.text.includes("(s)")
             ) {

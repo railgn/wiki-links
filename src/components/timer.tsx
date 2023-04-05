@@ -1,17 +1,17 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Score } from "../functions/score";
-import { Socket } from "socket.io";
-import { DefaultEventsMap } from "socket.io/dist/typed-events";
+import type { Score } from "@lib/score";
+import type { Socket } from "socket.io";
+import type { DefaultEventsMap } from "socket.io/dist/typed-events";
 
-type Props = {
+interface Props {
     round: number;
     score: Score;
     setScore: (score: Score) => void;
-    socket: Socket<DefaultEventsMap, DefaultEventsMap>;
+    socket?: Socket<DefaultEventsMap, DefaultEventsMap>;
     isLeader: boolean;
     pid: string;
     roundTime: number;
-};
+}
 
 export default function Timer({
     round,
@@ -22,13 +22,13 @@ export default function Timer({
     pid,
     roundTime,
 }: Props) {
-    const Ref = useRef(null);
+    const Ref = useRef<any | null>(null);
 
     const [timer, setTimer] = useState(roundTime.toString());
 
-    const [win_time, setWinTime] = useState("00");
+    const [winTime, setWinTime] = useState("00");
 
-    const [end_text, setEndText] = useState("hi");
+    const [endText, setEndText] = useState("hi");
 
     const getTimeRemaining = (e: Date) => {
         const total =
@@ -42,7 +42,7 @@ export default function Timer({
     };
 
     const startTimer = (e: Date) => {
-        let { total, seconds } = getTimeRemaining(e);
+        const { total, seconds } = getTimeRemaining(e);
 
         if (total >= 0) {
             setTimer(seconds.toString());
@@ -55,35 +55,35 @@ export default function Timer({
         // to code next
         setTimer(roundTime.toString());
 
-        if (Ref.current) clearInterval(Ref.current);
+        if (Ref.current != null) clearInterval(Ref.current);
         const id = setInterval(() => {
             startTimer(e);
         }, 1000);
         Ref.current = id as any;
     };
 
-    //set reset time amount
+    // set reset time amount
     const getDeadTime = () => {
-        let deadline = new Date();
+        const deadline = new Date();
 
-        //set here too
+        // set here too
         deadline.setSeconds(deadline.getSeconds() + roundTime);
         return deadline;
     };
 
-    if (socket && !isLeader) {
+    if (socket != null && !isLeader) {
         socket.on("pull deadline", (deadline) => {
             clearTimer(deadline);
         });
     }
 
-    //set timer on mount
+    // set timer on mount
     useEffect(() => {
         if (isLeader) {
             const deadline = getDeadTime();
 
-            //change round here as well?????
-            socket.emit("post deadline", pid, deadline);
+            // change round here as well?????
+            socket?.emit("post deadline", pid, deadline);
 
             clearTimer(deadline);
         }
@@ -98,7 +98,7 @@ export default function Timer({
                     1000 * Math.round(parseInt(timer) / roundTime),
                 streak: score.streak + 1,
             });
-            setEndText(`You earned ${parseInt(win_time) * 100} points!`);
+            setEndText(`You earned ${parseInt(winTime) * 100} points!`);
         } else {
             setEndText(`Incorrect!`);
         }
@@ -109,11 +109,8 @@ export default function Timer({
     }, [score.submission]);
 
     useEffect(() => {
-        if (timer == "0") {
-            if (
-                score.submission === "waiting" &&
-                score.correct_answer === false
-            ) {
+        if (timer === "0") {
+            if (score.submission === "waiting" && !score.correct_answer) {
                 setScore({
                     ...score,
                     round_over: true,
@@ -128,7 +125,7 @@ export default function Timer({
             {score.submission === "waiting" && timer !== "0" && (
                 <h2>Time Left: {timer}</h2>
             )}
-            {score.submission !== "waiting" && <h2>{end_text}</h2>}
+            {score.submission !== "waiting" && <h2>{endText}</h2>}
             {score.submission === "waiting" && timer === "0" && (
                 <h2>Time Over!</h2>
             )}

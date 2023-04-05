@@ -15,9 +15,9 @@ export type Category =
     | "Video games"
     | "Warfare";
 
-export type Filter = { [key in Category]: boolean };
+export type Filter = Record<Category, boolean>;
 
-export const default_filters: Filter = {
+export const defaultFilters: Filter = {
     "Agriculture, food, and drink": false,
     "Art and architecture": false,
     "Engineering and technology": false,
@@ -35,17 +35,16 @@ export const default_filters: Filter = {
     Warfare: false,
 };
 
-export function generate_category(filter: Filter) {
+export function generateCategory(filter: Filter) {
     const possible = [];
 
-    for (const category in filter) {
-        //@ts-ignore
+    for (const category of Object.keys(filter) as Category[]) {
         if (filter[category]) {
             possible.push(category);
         }
     }
 
-    if (!possible.length) {
+    if (possible.length === 0) {
         return Object.keys(filter)[
             Math.floor(Math.random() * Object.keys(filter).length)
         ] as Category;

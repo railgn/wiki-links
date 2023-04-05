@@ -1,8 +1,8 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import createURL from "../functions/createURL";
-import { nicknames } from "../functions/nicknames";
+import createURL from "@lib/createURL";
+import { nicknames } from "@lib/nicknames";
 import { useContext, useEffect, useState } from "react";
 
 import { NameContext } from "../context/NameContext";

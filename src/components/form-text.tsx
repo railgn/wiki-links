@@ -1,12 +1,13 @@
-import { Score } from "../functions/score";
 import { useEffect, useState } from "react";
 
-type Props = {
+import type { Score } from "@lib/score";
+
+interface Props {
     setScore: (score: Score) => void;
     score: Score;
-};
+}
 
-export default function Form_Text({ setScore, score }: Props) {
+export default function FormText({ setScore, score }: Props) {
     const [message, setMessage] = useState("");
 
     const handleSubmit = (event: any) => {
@@ -32,7 +33,7 @@ export default function Form_Text({ setScore, score }: Props) {
         }
     };
 
-    const handleFocus = (event: any) => {
+    const handleFocus = (_event: any) => {
         if (!score.correct_answer) {
             setMessage("");
         }
@@ -42,13 +43,13 @@ export default function Form_Text({ setScore, score }: Props) {
         if (!score.correct_answer) {
             setMessage("");
         }
-    }, [score.submission]);
+    }, [score.submission, score.correct_answer]);
 
     useEffect(() => {
         if (score.correct_answer) {
             setMessage(score.submission);
         }
-    }, [score.correct_answer]);
+    }, [score.correct_answer, score.submission, setMessage]);
 
     useEffect(() => {
         setMessage("");

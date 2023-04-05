@@ -1,7 +1,7 @@
 export default function checkUnique(arr1: string[], arr2: string[]): boolean {
     let res = true;
 
-    const hash: { [key: string]: number } = {};
+    const hash: Record<string, number> = {};
 
     for (const str of arr1) {
         const key = str.toLocaleLowerCase();
@@ -11,7 +11,7 @@ export default function checkUnique(arr1: string[], arr2: string[]): boolean {
 
     for (const str of arr2) {
         const key = str.toLocaleLowerCase();
-        if (hash[key]) {
+        if (hash[key] != null) {
             res = false;
         }
     }

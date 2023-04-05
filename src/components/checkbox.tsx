@@ -1,12 +1,12 @@
-import { Filter, Category } from "../functions/filter";
+import type { Filter, Category } from "@lib/filter";
 
-type Props = {
+interface Props {
     setFilter: (state: Filter) => void;
     filter: Filter;
     category: Category;
     mykey: number;
     isLeader: boolean;
-};
+}
 
 export default function Checkbox({
     setFilter,

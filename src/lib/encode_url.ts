@@ -1,4 +1,4 @@
-//@ts-ignore
+// @ts-expect-error
 import { encode } from "url-encode-decode";
 
 export default function encodeURL(title: string): string {
