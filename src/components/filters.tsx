@@ -14,13 +14,12 @@ export default function Filters({ setFilter, filter, isLeader }: Props) {
         let key = 1;
         for (const category in filter) {
             result.push(
-                //@ts-ignore
                 <Checkbox
                     isLeader={isLeader}
                     setFilter={setFilter}
                     filter={filter}
                     category={category as Category}
-                    key={key}
+                    mykey={key}
                 />
             );
             key++;

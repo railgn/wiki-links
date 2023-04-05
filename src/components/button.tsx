@@ -40,7 +40,6 @@ export default function Button({
 
     return (
         <div>
-            {/* @ts-ignore */}
             {display !== "" && (
                 <>
                     <button
