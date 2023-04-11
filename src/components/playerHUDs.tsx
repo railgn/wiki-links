@@ -1,4 +1,4 @@
-import { type Game, gameOver } from "@lib/game";
+import { type Game } from "@lib/game";
 
 import PlayerHUD from "./playerHUD";
 import styles from "../styles/playerHUDs.module.css";

@@ -250,6 +250,7 @@ export default function Game() {
     }, [score, game]);
 
     // get a new link from data
+
     const linkTest = api.example.getLink.useQuery(
         { fetch: link.fetch, category: link.category },
         {
