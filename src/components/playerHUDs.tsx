@@ -25,27 +25,31 @@ export default function PlayerHUDs({ players, name, game }: Props) {
         for (const id in players) {
             if (players[id]?.name === name) {
                 result.unshift(
-                    <PlayerHUD
-                        name={players[id]!.name}
-                        score={players[id]!.score}
-                        isLeader={players[id]!.isLeader}
-                        roundOver={players[id]!.roundOver}
-                        correct={players[id]!.correct}
-                        key={key}
-                        game={game}
-                    />
+                    <div>
+                        <PlayerHUD
+                            name={players[id]!.name}
+                            score={players[id]!.score}
+                            isLeader={players[id]!.isLeader}
+                            roundOver={players[id]!.roundOver}
+                            correct={players[id]!.correct}
+                            key={key}
+                            game={game}
+                        />
+                    </div>
                 );
             } else {
                 result.push(
-                    <PlayerHUD
-                        name={players[id]!.name}
-                        score={players[id]!.score}
-                        isLeader={players[id]!.isLeader}
-                        roundOver={players[id]!.roundOver}
-                        correct={players[id]!.correct}
-                        key={key}
-                        game={game}
-                    />
+                    <div>
+                        <PlayerHUD
+                            name={players[id]!.name}
+                            score={players[id]!.score}
+                            isLeader={players[id]!.isLeader}
+                            roundOver={players[id]!.roundOver}
+                            correct={players[id]!.correct}
+                            key={key}
+                            game={game}
+                        />
+                    </div>
                 );
             }
 

@@ -5,9 +5,7 @@
     },
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "project": "./tsconfig.json",
-        "ecmaVersion": "latest",
-        "sourceType": "module"
+        "project": "./tsconfig.json"
     },
     "plugins": ["@typescript-eslint"],
     "extends": [
@@ -28,6 +26,8 @@
         "@typescript-eslint/no-non-null-assertion": "off",
         "react/react-in-jsx-scope": "off",
         "@typescript-eslint/comma-dangle": "off",
-        "multiline-ternary": "off"
+        "multiline-ternary": "off",
+        "@typescript-eslint/consistent-type-assertions": "off",
+        "@typescript-eslint/strict-boolean-expressions": "off"
     }
 }

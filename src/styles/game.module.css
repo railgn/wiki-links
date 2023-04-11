@@ -1,9 +1,90 @@
-.verticalPadding {
-    margin-top: 2vh;
+.wrapper {
+    max-height: 98vh;
+    max-width: 98vw;
 }
 
-.transitionTest {
-    transform: translate(0px, 0px);
-    transition: opacity 100ms ease 0s,
-        transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1) 0s;
+.header {
+    height: 7vh;
+    width: 95vw;
+    text-align: center;
+    border: 2px solid red;
+    margin: auto;
+    display: flex;
+    align-items: center;
+}
+
+.title {
+    width: 95vw;
+}
+
+.pid {
+    position: absolute;
+    top: 1vw;
+    right: 1vw;
+    font-weight: bold;
+    font-size: larger;
+}
+
+.loading {
+    position: absolute;
+    top: 30vw;
+    right: 50vh;
+}
+
+.mainContent {
+    width: 95vw;
+    height: 88vh;
+    text-align: left;
+    border: 2px solid red;
+    margin: auto;
+    font-size: 1.5rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.filterContainer {
+    height: 88vh;
+    width: 70vw;
+    border: 2px solid red;
+    padding: 1vh;
+}
+
+.categorySelect {
+    font-weight: bold;
+}
+
+.otherOptions {
+    text-align: left;
+}
+
+.otherOptionsLabel {
+    font-weight: bold;
+}
+
+.startButtonWrapper {
+    width: 44vw;
+    display: flex;
+    align-items: left;
+    padding-left: 1vw;
+}
+
+.startButton {
+}
+
+.playerHUD {
+    height: 88vh;
+    width: 20vw;
+    border: 2px solid red;
+    padding: 1vh;
+    text-align: center;
+}
+
+.roleIndicator {
+    font-weight: bold;
+}
+
+.verticalPadding {
+    margin-top: 2vh;
 }

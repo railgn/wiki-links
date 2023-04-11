@@ -1,4 +1,5 @@
 import type { Game } from "@lib/game";
+import styles from "../styles/playerHUD.module.css";
 
 interface Props {
     name: string;
@@ -20,7 +21,7 @@ export default function PlayerHUD({
     game,
 }: Props) {
     return (
-        <div key={key}>
+        <div key={key} className={styles.container}>
             <div>
                 {name}
                 &nbsp;

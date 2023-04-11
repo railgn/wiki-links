@@ -1,0 +1,114 @@
+.header {
+    height: 7vh;
+    width: 95vw;
+    text-align: center;
+    border: 2px solid red;
+    margin: auto;
+    display: flex;
+    align-items: center;
+}
+
+.title {
+    width: 95vw;
+}
+
+.mainContent {
+    width: 100vw;
+    height: 50vh;
+    text-align: center;
+    border: 2px solid red;
+    max-width: 500px;
+    max-height: 300px;
+    margin: auto;
+    font-size: 1.5rem;
+}
+
+.nameArea {
+    width: 100vw;
+    max-width: 500px;
+    height: 15vh;
+    max-height: 80px;
+    border: 2px solid red;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.name {
+    width: 100vw;
+    max-width: 500px;
+}
+
+.nameInput {
+    height: 13vh;
+    max-height: 50px;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.lobbyArea {
+    display: flex;
+    flex-direction: row;
+    width: 100vw;
+    max-width: 500px;
+    height: 35vh;
+    max-height: 220px;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid red;
+}
+
+.createLobby {
+    width: 50vw;
+    max-width: 250px;
+    height: 35vh;
+    max-height: 220px;
+    border: 2px solid red;
+    display: flex;
+    align-items: center;
+}
+
+.createLink {
+    width: 50vw;
+    max-width: 250px;
+}
+
+.joinLobby {
+    width: 50vw;
+    max-width: 250px;
+    height: 35vh;
+    max-height: 220px;
+    border: 2px solid red;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.joinLink {
+    width: 50vw;
+    max-width: 250px;
+}
+
+.joinInput {
+    height: 15vh;
+    max-height: 50px;
+    font-size: 1.5rem;
+    text-align: center;
+    max-width: 225px;
+}
+
+.buffer {
+    height: 4vh;
+    max-height: 150px;
+}
+
+.about {
+    width: 100vw;
+    height: 30vh;
+    text-align: center;
+    border: 2px solid red;
+    max-width: 500px;
+    max-height: 300px;
+    margin: auto;
+    font-size: 1.5rem;
+}
