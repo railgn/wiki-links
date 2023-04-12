@@ -1,4 +1,11 @@
 To-do:
 
--Only render page when answer choices !== "" && article title !== ""
--add animation for them and see how it looks?
+-css, animations
+
+-change database to take "number of rounds" as a column
+-only show highscores of the same number of rounds as player
+
+-add modal to copy to keyboard
+-update copy to keyboard text to be full url
+
+-game over highscore css

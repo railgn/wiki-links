@@ -4,6 +4,8 @@ import type { Score } from "@lib/score";
 
 import Button, { type ButtonReturn } from "./button";
 
+import styles from "../styles/formMC.module.css";
+
 interface Props {
     setScore: (score: Score) => void;
     score: Score;
@@ -81,23 +83,21 @@ export default function FormMC({
             // SAFETY: we are guaranteed this is the same length.
             const info = buttonInfo[buttonOrder[i]!]!;
             result.push(
-                <div>
-                    <Button
-                        setButtonReturn={setButtonReturn}
-                        buttonReturn={info.answer}
-                        display={info.display}
-                        article={info.article}
-                        color={info.color}
-                        roundOver={score.round_over}
-                        mykey={key}
-                        isSpectator={isSpectator}
-                    />
-                </div>
+                <Button
+                    setButtonReturn={setButtonReturn}
+                    buttonReturn={info.answer}
+                    display={info.display}
+                    article={info.article}
+                    color={info.color}
+                    roundOver={score.round_over}
+                    mykey={key}
+                    isSpectator={isSpectator}
+                />
             );
             key++;
         }
 
-        return <>{result}</>;
+        return <div className={styles.inputContainer}>{result}</div>;
     };
 
     // set score state on change
@@ -126,9 +126,9 @@ export default function FormMC({
     return (
         <>
             {!empty() && (
-                <>
-                    <div>{renderButtons(correctAnchors, incorrectAnchor)}</div>
-                </>
+                <div className={styles.FormMC}>
+                    {renderButtons(correctAnchors, incorrectAnchor)}
+                </div>
             )}
         </>
     );

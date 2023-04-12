@@ -56,7 +56,7 @@ export const exampleRouter = createTRPCRouter({
                 subArticleLinks[
                     Math.floor(subArticleLinks.length * Math.random())
                 ]
-            ) as string;
+            );
 
             return {
                 mainArticle,
@@ -71,6 +71,7 @@ export const exampleRouter = createTRPCRouter({
                 score: z.number(),
                 categories: z.array(z.string()),
                 name: z.string().optional(),
+                rounds: z.number().optional(),
             })
         )
         .mutation(async ({ input }) => {
@@ -80,6 +81,7 @@ export const exampleRouter = createTRPCRouter({
                         categories: input.categories.join(", "),
                         score: input.score,
                         name: input.name ? input.name : "",
+                        rounds: input.rounds,
                     },
                 });
             } catch (e) {
@@ -97,22 +99,29 @@ export const exampleRouter = createTRPCRouter({
         .input(
             z.object({
                 fetch: z.boolean(),
+                rounds: z.number(),
             })
         )
         .query(async ({ input }) => {
             if (input.fetch) {
                 const response = await prisma.wikiScores.findMany({
+                    where: {
+                        rounds: {
+                            equals: input.rounds,
+                        },
+                    },
                     select: {
                         score: true,
                         categories: true,
                         date: true,
                         name: true,
+                        rounds: true,
                     },
                     orderBy: {
                         score: "desc",
                     },
                 });
-                return response.slice(0, 10);
+                return response.slice(0, 20);
             }
 
             return [{} as HighScore];

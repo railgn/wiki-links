@@ -52,6 +52,7 @@ export default function Score({
             <td>{mykey}</td>
             <td>{highscore?.name}</td>
             <td>{highscore?.categories}</td>
+            <td>{highscore?.rounds}</td>
             <td>{highscore?.score}</td>
             <td>{dateDisplay}</td>
 

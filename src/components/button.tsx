@@ -36,12 +36,27 @@ export default function Button({
     if (roundOver) {
         buttonStyle =
             buttonReturn === "correct" ? styles.correct : styles.incorrect;
+    } else {
+        switch (mykey) {
+            case 1:
+                buttonStyle = styles.blue;
+                break;
+            case 2:
+                buttonStyle = styles.yellow;
+                break;
+            case 3:
+                buttonStyle = styles.purple;
+                break;
+            case 4:
+                buttonStyle = styles.orange;
+                break;
+        }
     }
 
     const articleURL = encodeURL(article);
 
     return (
-        <div>
+        <span className={styles.button}>
             {display !== "" && (
                 <>
                     <button
@@ -54,14 +69,14 @@ export default function Button({
                     >
                         {display}
                     </button>
-                    &nbsp; &nbsp;
-                    {roundOver && (
+
+                    {/* {roundOver && (
                         <a href={articleURL} target="_blank" rel="noreferrer">
                             {article}
                         </a>
-                    )}
+                    )} */}
                 </>
             )}
-        </div>
+        </span>
     );
 }

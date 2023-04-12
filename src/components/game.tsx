@@ -359,6 +359,20 @@ export default function Game() {
         ? "Leader"
         : "Player";
 
+    const copyPIDToClipboard = async (pid: string) => {
+        return await navigator.clipboard.writeText(pid);
+    };
+
+    const handleClick = () => {
+        copyPIDToClipboard(pid as string)
+            .then(() => {
+                setTimeout(() => {}, 1500);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+
     return (
         <>
             <div className={styles.wrapper}>
@@ -371,7 +385,13 @@ export default function Game() {
 
                 {socketLoaded && (
                     <>
-                        <div className={styles.pid}>Lobby Code: {pid}</div>
+                        <div
+                            className={styles.pid}
+                            onClick={handleClick}
+                            title="Copy link to clipboard"
+                        >
+                            Lobby Code: {pid}
+                        </div>
 
                         <div className={styles.verticalPadding}></div>
 
@@ -572,118 +592,206 @@ export default function Game() {
                         {/* game rounds */}
                         {!game.filter_select && !game.game_over && (
                             <>
-                                <div>
+                                <div className={styles.instructionsContainer}>
                                     <h3>
-                                        Choose the link NOT found in the Wiki
-                                        article
+                                        Choose the link <u>NOT</u> found in the
+                                        Wikipedia article
                                     </h3>
                                 </div>
-                                <div>Round: {score.round}</div>
-                                <div>Score: {score.score}</div>
-                                <div>Current Streak: {score.streak}</div>
+                                <span className={styles.round}>
+                                    Round {score.round} of {numberOfRounds}
+                                </span>
 
-                                <div className={styles.verticalPadding}></div>
-
-                                {answerChoices.mainArticle !== "" &&
-                                    answerChoices.correct !== "" && (
-                                        <>
-                                            <div>
-                                                Category:{" "}
-                                                {answerChoices.mainArticle !==
-                                                ""
-                                                    ? link.category
-                                                    : link.category}
-                                            </div>
-                                            <div>
-                                                Wiki Article:{" "}
-                                                {decode(
-                                                    answerChoices.mainArticle
-                                                )}
-                                            </div>
-
-                                            <div>
-                                                <Timer
-                                                    round={score.round}
-                                                    score={score}
-                                                    setScore={setScore}
-                                                    socket={socket}
-                                                    isLeader={isLeader}
-                                                    pid={pid as string}
-                                                    roundTime={roundTime}
-                                                />
-                                            </div>
-
-                                            {/* submission input */}
-                                            <div>
-                                                <FormMC
-                                                    setScore={setScore}
-                                                    score={score}
-                                                    correctAnchors={
-                                                        answerChoices.incorrect
-                                                    }
-                                                    incorrectAnchor={
-                                                        answerChoices.correct
-                                                    }
-                                                    mainArticle={
-                                                        answerChoices.mainArticle
-                                                    }
-                                                    subArticle={
-                                                        answerChoices.subArticle
-                                                    }
-                                                    isSpectator={isSpectator}
-                                                />
-                                            </div>
-
-                                            <div
-                                                className={
-                                                    styles.verticalPadding
-                                                }
-                                            ></div>
-
-                                            {/* HUD for all players */}
-                                            {socket && (
-                                                <PlayerHUDs
-                                                    players={HUDinfo}
-                                                    name={name}
-                                                    game={game}
-                                                />
-                                            )}
-
-                                            {score.round_over &&
-                                                isLeader &&
-                                                readyForNextRound() && (
-                                                    <div>
-                                                        <button
-                                                            disabled={!isLeader}
-                                                            onClick={() =>
-                                                                nextRound(
-                                                                    score,
-                                                                    setScore,
-                                                                    link,
-                                                                    setLink,
-                                                                    filter
-                                                                )
+                                <div className={styles.mainGame}>
+                                    <div className={styles.gameContainer}>
+                                        {answerChoices.mainArticle !== "" &&
+                                            answerChoices.correct !== "" && (
+                                                <span
+                                                    className={styles.animation}
+                                                >
+                                                    <div
+                                                        className={
+                                                            styles.articleContainer
+                                                        }
+                                                    >
+                                                        <div
+                                                            className={
+                                                                styles.category
                                                             }
                                                         >
-                                                            New Round
-                                                        </button>
-                                                        &nbsp; &nbsp;
-                                                        <button
-                                                            disabled={!isLeader}
-                                                            onClick={() =>
-                                                                categorySelect(
-                                                                    setScore,
-                                                                    game,
-                                                                    setGame
-                                                                )
+                                                            {answerChoices.mainArticle !==
+                                                            ""
+                                                                ? link.category
+                                                                : link.category}
+                                                        </div>
+                                                        <div
+                                                            className={
+                                                                styles.article
                                                             }
                                                         >
-                                                            Lobby Options
-                                                        </button>
+                                                            {decode(
+                                                                answerChoices.mainArticle
+                                                            )}
+                                                        </div>
                                                     </div>
-                                                )}
-                                        </>
-                                    )}
+
+                                                    <span>
+                                                        <Timer
+                                                            round={score.round}
+                                                            score={score}
+                                                            setScore={setScore}
+                                                            socket={socket}
+                                                            isLeader={isLeader}
+                                                            pid={pid as string}
+                                                            roundTime={
+                                                                roundTime
+                                                            }
+                                                        />
+                                                    </span>
+
+                                                    {/* submission input */}
+                                                    <div
+                                                        className={
+                                                            styles.inputContainer
+                                                        }
+                                                    >
+                                                        <FormMC
+                                                            setScore={setScore}
+                                                            score={score}
+                                                            correctAnchors={
+                                                                answerChoices.incorrect
+                                                            }
+                                                            incorrectAnchor={
+                                                                answerChoices.correct
+                                                            }
+                                                            mainArticle={
+                                                                answerChoices.mainArticle
+                                                            }
+                                                            subArticle={
+                                                                answerChoices.subArticle
+                                                            }
+                                                            isSpectator={
+                                                                isSpectator
+                                                            }
+                                                        />
+                                                    </div>
+
+                                                    <div
+                                                        className={
+                                                            styles.verticalPadding
+                                                        }
+                                                    ></div>
+
+                                                    <div
+                                                        className={
+                                                            styles.roundOver
+                                                        }
+                                                    >
+                                                        {score.round_over &&
+                                                            readyForNextRound() && (
+                                                                <div>
+                                                                    <div>
+                                                                        Main
+                                                                        Article
+                                                                        -{" "}
+                                                                        <a
+                                                                            className={
+                                                                                styles.articleDisplay
+                                                                            }
+                                                                            href={
+                                                                                answerChoices.mainArticle
+                                                                            }
+                                                                            target="_blank"
+                                                                            rel="noreferrer"
+                                                                        >
+                                                                            {
+                                                                                answerChoices.mainArticle
+                                                                            }
+                                                                        </a>
+                                                                    </div>
+                                                                    <div>
+                                                                        Sub
+                                                                        Article
+                                                                        -{" "}
+                                                                        <a
+                                                                            className={
+                                                                                styles.articleDisplay
+                                                                            }
+                                                                            href={
+                                                                                answerChoices.subArticle
+                                                                            }
+                                                                            target="_blank"
+                                                                            rel="noreferrer"
+                                                                        >
+                                                                            {
+                                                                                answerChoices.subArticle
+                                                                            }
+                                                                        </a>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+
+                                                        <div
+                                                            className={
+                                                                styles.verticalPadding
+                                                            }
+                                                        ></div>
+
+                                                        {score.round_over &&
+                                                            isLeader &&
+                                                            readyForNextRound() && (
+                                                                <div>
+                                                                    <button
+                                                                        disabled={
+                                                                            !isLeader
+                                                                        }
+                                                                        onClick={() =>
+                                                                            nextRound(
+                                                                                score,
+                                                                                setScore,
+                                                                                link,
+                                                                                setLink,
+                                                                                filter
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        New
+                                                                        Round
+                                                                    </button>
+                                                                    &nbsp;
+                                                                    &nbsp;
+                                                                    <button
+                                                                        disabled={
+                                                                            !isLeader
+                                                                        }
+                                                                        onClick={() =>
+                                                                            categorySelect(
+                                                                                setScore,
+                                                                                game,
+                                                                                setGame
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        Lobby
+                                                                        Options
+                                                                    </button>
+                                                                </div>
+                                                            )}
+                                                    </div>
+                                                </span>
+                                            )}
+                                    </div>
+                                    <div className={styles.playerHUDGame}>
+                                        {/* HUD for all players */}
+                                        {socket && (
+                                            <PlayerHUDs
+                                                players={HUDinfo}
+                                                name={name}
+                                                game={game}
+                                            />
+                                        )}
+                                    </div>
+                                </div>
 
                                 {/* answers for cheating
 
@@ -707,6 +815,7 @@ export default function Game() {
                                     name={name}
                                     isLeader={isLeader}
                                     isSpectator={isSpectator}
+                                    numberOfRounds={numberOfRounds}
                                 />
                             </>
                         )}

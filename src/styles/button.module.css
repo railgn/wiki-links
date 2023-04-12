@@ -1,11 +1,48 @@
+@keyframes slideInFromBottom {
+    0% {
+        transform: translateY(100%);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+.button button {
+    width: 28vw;
+    height: 20vh;
+    padding: 1vw 1vh;
+    margin: 0.5vw;
+    font-size: xx-large;
+    display: inline-block;
+    text-align: center;
+    animation: 0.5s ease-out 0s 1 slideInFromBottom;
+    vertical-align: bottom;
+    border: 2px solid black;
+}
+
 .correct {
-    background-color: green;
+    background-color: rgb(16, 200, 16);
+    color: white;
 }
 
 .incorrect {
-    background-color: red;
+    background-color: rgb(228, 60, 54);
+    color: white;
 }
 
-.normal {
-    color: black;
+.blue {
+    background-color: lightskyblue;
+    color: rgb(1, 1, 95);
+}
+.yellow {
+    background-color: khaki;
+    color: rgb(10, 10, 9);
+}
+.purple {
+    background-color: mediumpurple;
+    color: rgb(8, 8, 8);
+}
+.orange {
+    background-color: lightcoral;
+    color: rgb(23, 22, 21);
 }

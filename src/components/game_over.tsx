@@ -22,6 +22,7 @@ interface Props {
     name: string;
     isLeader: boolean;
     isSpectator: boolean;
+    numberOfRounds: number;
 }
 
 export default function GameOver({
@@ -35,6 +36,7 @@ export default function GameOver({
     name,
     isLeader,
     isSpectator,
+    numberOfRounds,
 }: Props) {
     const [postScore, setPostScore] = useState(false);
     const [highScores, setHighScores] = useState<HighScore[]>([]);
@@ -83,6 +85,7 @@ export default function GameOver({
                 categories,
                 name,
                 score: score.score,
+                rounds: numberOfRounds,
             });
             return true;
         });
@@ -93,6 +96,7 @@ export default function GameOver({
     const getScores = api.example.getScores.useQuery(
         {
             fetch: fetchScores,
+            rounds: numberOfRounds,
         },
         {
             refetchOnWindowFocus: false,

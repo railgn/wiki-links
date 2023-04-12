@@ -3,4 +3,5 @@ export interface HighScore {
     name: string | null;
     date: Date;
     categories: string;
+    rounds: number | null;
 }

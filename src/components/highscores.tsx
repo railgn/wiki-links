@@ -47,11 +47,12 @@ export default function HighScores({
                         <th>Rank</th>
                         <th>Name</th>
                         <th>Categories</th>
+                        <th>Rounds</th>
                         <th>Score</th>
                         <th>Date</th>
                     </tr>
 
-                    {highscores.length > 5 && (
+                    {highscores.length > 2 && (
                         <>
                             {renderHighScores(
                                 highscores,

@@ -23,12 +23,8 @@ export default function PlayerHUD({
     return (
         <div key={key} className={styles.container}>
             <div>
-                {name}
-                &nbsp;
-                {isLeader && <>&#128081;</>}
-            </div>
-            <div>
-                Score: {score} &nbsp;
+                {isLeader && <>&#128081;</>}&nbsp;
+                {name}&nbsp; |&nbsp; Score: {score} &nbsp;
                 {!game.filter_select &&
                     !game.game_over &&
                     (roundOver ? (
