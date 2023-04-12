@@ -108,7 +108,7 @@ export default function GameOver({
     );
 
     return (
-        <>
+        <div className={styles.gameOverContainer}>
             {/* <div>Name: {name}</div>
             <div>Score: {score.score}</div>
             <div>Categories: {categoryState}</div>
@@ -127,12 +127,6 @@ export default function GameOver({
             {isLeader && (
                 <div>
                     <button
-                        onClick={() => categorySelect(setScore, game, setGame)}
-                    >
-                        Lobby Options
-                    </button>
-                    &nbsp; &nbsp;
-                    <button
                         onClick={() =>
                             startGame(
                                 score,
@@ -147,8 +141,14 @@ export default function GameOver({
                     >
                         Play Again
                     </button>
+                    &nbsp; &nbsp;
+                    <button
+                        onClick={() => categorySelect(setScore, game, setGame)}
+                    >
+                        Lobby Options
+                    </button>
                 </div>
             )}
-        </>
+        </div>
     );
 }

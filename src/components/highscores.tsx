@@ -40,7 +40,7 @@ export default function HighScores({
 
     return (
         <div>
-            <h3>Highscores:</h3>
+            <h3>Highscores</h3>
             <div>
                 <table>
                     <tr>

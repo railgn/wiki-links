@@ -1,3 +1,11 @@
 .verticalPadding {
     margin-top: 2vh;
 }
+
+.gameOverContainer {
+    height: 88vh;
+    width: 70vw;
+    border: 2px solid red;
+    padding: 1vh;
+    font-size: smaller;
+}

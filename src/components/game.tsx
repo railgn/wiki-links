@@ -433,7 +433,7 @@ export default function Game() {
                                                     onChange={
                                                         handleNumberOfRounds
                                                     }
-                                                    disabled={isLeader}
+                                                    disabled={!isLeader}
                                                 />
                                                 5
                                             </label>
@@ -449,7 +449,7 @@ export default function Game() {
                                                     onChange={
                                                         handleNumberOfRounds
                                                     }
-                                                    disabled={isLeader}
+                                                    disabled={!isLeader}
                                                 />
                                                 10
                                             </label>
@@ -465,7 +465,7 @@ export default function Game() {
                                                     onChange={
                                                         handleNumberOfRounds
                                                     }
-                                                    disabled={isLeader}
+                                                    disabled={!isLeader}
                                                 />
                                                 15
                                             </label>
@@ -485,7 +485,7 @@ export default function Game() {
                                                     value="10"
                                                     checked={roundTime === 10}
                                                     onChange={handleRoundTime}
-                                                    disabled={isLeader}
+                                                    disabled={!isLeader}
                                                 />
                                                 10
                                             </label>
@@ -497,7 +497,7 @@ export default function Game() {
                                                     value="20"
                                                     checked={roundTime === 20}
                                                     onChange={handleRoundTime}
-                                                    disabled={isLeader}
+                                                    disabled={!isLeader}
                                                 />
                                                 20
                                             </label>
@@ -509,7 +509,7 @@ export default function Game() {
                                                     value="30"
                                                     checked={roundTime === 30}
                                                     onChange={handleRoundTime}
-                                                    disabled={isLeader}
+                                                    disabled={!isLeader}
                                                 />
                                                 30
                                             </label>
@@ -803,7 +803,7 @@ export default function Game() {
 
                         {/* game end */}
                         {game.game_over && (
-                            <>
+                            <div className={styles.mainGame}>
                                 <GameOver
                                     score={score}
                                     game={game}
@@ -817,7 +817,18 @@ export default function Game() {
                                     isSpectator={isSpectator}
                                     numberOfRounds={numberOfRounds}
                                 />
-                            </>
+
+                                <div className={styles.playerHUDGame}>
+                                    {/* HUD for all players */}
+                                    {socket && (
+                                        <PlayerHUDs
+                                            players={HUDinfo}
+                                            name={name}
+                                            game={game}
+                                        />
+                                    )}
+                                </div>
+                            </div>
                         )}
                     </>
                 )}

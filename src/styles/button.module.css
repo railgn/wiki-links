@@ -1,6 +1,6 @@
 @keyframes slideInFromBottom {
     0% {
-        transform: translateY(100%);
+        transform: translateY(75%);
     }
     100% {
         transform: translateY(0);
@@ -15,7 +15,7 @@
     font-size: xx-large;
     display: inline-block;
     text-align: center;
-    animation: 0.5s ease-out 0s 1 slideInFromBottom;
+    animation: 0.3s ease-out 0s 1 slideInFromBottom;
     vertical-align: bottom;
     border: 2px solid black;
 }
