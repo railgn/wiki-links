@@ -1,9 +1,10 @@
 import { type Game } from "@lib/game";
+import getPlace from "@lib/placing";
 
 import PlayerHUD from "./playerHUD";
 import styles from "../styles/playerHUDs.module.css";
 
-type Players = Record<string, Player>;
+export type Players = Record<string, Player>;
 interface Player {
     name: string;
     score: number;
@@ -23,6 +24,8 @@ export default function PlayerHUDs({ players, name, game }: Props) {
         const result = [];
         let key = 1;
         for (const id in players) {
+            const place = getPlace(players[id]!.score, players);
+
             if (players[id]?.name === name) {
                 result.unshift(
                     <div>
@@ -34,6 +37,7 @@ export default function PlayerHUDs({ players, name, game }: Props) {
                             correct={players[id]!.correct}
                             key={key}
                             game={game}
+                            place={place}
                         />
                     </div>
                 );
@@ -48,6 +52,7 @@ export default function PlayerHUDs({ players, name, game }: Props) {
                             correct={players[id]!.correct}
                             key={key}
                             game={game}
+                            place={place}
                         />
                     </div>
                 );

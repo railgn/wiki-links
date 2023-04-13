@@ -1,5 +1,6 @@
 import type { HighScore } from "@lib/highscore";
 import Score from "./score";
+import styles from "../styles/highscores.module.css";
 
 interface Props {
     highscores: HighScore[];
@@ -40,8 +41,8 @@ export default function HighScores({
 
     return (
         <div>
-            <h3>Highscores</h3>
-            <div>
+            <h3 className={styles.highscoreTitle}>Highscores</h3>
+            <div className={styles.tableClass}>
                 <table>
                     <tr>
                         <th>Rank</th>
@@ -52,7 +53,7 @@ export default function HighScores({
                         <th>Date</th>
                     </tr>
 
-                    {highscores.length > 2 && (
+                    {highscores.length > 1 && (
                         <>
                             {renderHighScores(
                                 highscores,

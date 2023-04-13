@@ -124,8 +124,10 @@ export default function GameOver({
                 categories={categoryState}
             />
 
+            <div className={styles.verticalPadding}></div>
+
             {isLeader && (
-                <div>
+                <div className={styles.buttonStyles}>
                     <button
                         onClick={() =>
                             startGame(

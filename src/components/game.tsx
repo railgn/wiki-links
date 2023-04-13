@@ -45,6 +45,8 @@ export default function Game() {
     const [numberOfRounds, setNumberOfRounds] = useState(10);
     const [roundTime, setRoundTime] = useState(20);
 
+    const [animationClass, setAnimationClass] = useState(styles.animation);
+
     const { name, setName } = useContext(NameContext);
 
     const router = useRouter();
@@ -69,10 +71,21 @@ export default function Game() {
         }
     >);
 
-    console.log(socketConnect);
+    useEffect(() => {
+        setAnimationClass((newestClassValue) => {
+            console.log("HELLO ANIMATION MAN");
+            return newestClassValue === styles.animation
+                ? styles.noAnimation
+                : styles.animation;
+        });
+
+        console.log(animationClass);
+    }, [answerChoices.mainArticle, link.category, score.round]);
 
     // socket event listeners
     useEffect(() => {
+        if (!pid) return;
+
         setSocketConnect((newestSocketConnectValue) => {
             if (!newestSocketConnectValue) return false;
 
@@ -181,7 +194,7 @@ export default function Game() {
 
             return false;
         });
-    }, []);
+    }, [pid]);
 
     // filter change event
     useEffect(() => {
@@ -250,7 +263,6 @@ export default function Game() {
     }, [score, game]);
 
     // get a new link from data
-
     const linkTest = api.example.getLink.useQuery(
         { fetch: link.fetch, category: link.category },
         {
@@ -345,6 +357,9 @@ export default function Game() {
         let res = true;
 
         for (const id in HUDinfo) {
+            // ADD TIMER CONTEXT SO THIS CONDITIONAL CAN ALSO CHECK IF TIMER !== 0.
+            // RIGHT NOW GAME CAN STALL IF SOMEONE DISCONNECTS
+            // ALSO WANT TO REMOVE FROM HUDINFO ON DISCONNECT IMMEDIATELY
             if (HUDinfo[id]?.roundOver === false) {
                 res = false;
             }
@@ -360,7 +375,9 @@ export default function Game() {
         : "Player";
 
     const copyPIDToClipboard = async (pid: string) => {
-        return await navigator.clipboard.writeText(pid);
+        return await navigator.clipboard.writeText(
+            `wiki-links.net/game/${pid}`
+        );
     };
 
     const handleClick = () => {
@@ -388,14 +405,14 @@ export default function Game() {
                         <div
                             className={styles.pid}
                             onClick={handleClick}
-                            title="Copy link to clipboard"
+                            title="Copy lobby link"
                         >
                             Lobby Code: {pid}
                         </div>
 
                         <div className={styles.verticalPadding}></div>
 
-                        {/* category filters */}
+                        {/* game options */}
                         {game.filter_select && (
                             <div className={styles.mainContent}>
                                 <div className={styles.filterContainer}>
@@ -412,7 +429,7 @@ export default function Game() {
                                         className={styles.verticalPadding}
                                     ></div>
 
-                                    {/* game options */}
+                                    {/* other options */}
                                     <div className={styles.otherOptions}>
                                         <div>
                                             <span
@@ -607,7 +624,7 @@ export default function Game() {
                                         {answerChoices.mainArticle !== "" &&
                                             answerChoices.correct !== "" && (
                                                 <span
-                                                    className={styles.animation}
+                                                    className={animationClass}
                                                 >
                                                     <div
                                                         className={
@@ -622,7 +639,7 @@ export default function Game() {
                                                             {answerChoices.mainArticle !==
                                                             ""
                                                                 ? link.category
-                                                                : link.category}
+                                                                : ""}
                                                         </div>
                                                         <div
                                                             className={

@@ -9,6 +9,7 @@ interface Props {
     correct: boolean;
     key: number;
     game: Game;
+    place: number;
 }
 
 export default function PlayerHUD({
@@ -19,7 +20,18 @@ export default function PlayerHUD({
     roundOver,
     correct,
     game,
+    place,
 }: Props) {
+    let medal = <></>;
+
+    if (place === 1) {
+        medal = <>&#129351;</>;
+    } else if (place === 2) {
+        medal = <>&#129352;</>;
+    } else if (place === 3) {
+        medal = <>&#129353;</>;
+    }
+
     return (
         <div key={key} className={styles.container}>
             <div>
@@ -36,6 +48,7 @@ export default function PlayerHUD({
                     ) : (
                         <></>
                     ))}
+                {game.game_over && !game.filter_select && medal}
             </div>
         </div>
     );

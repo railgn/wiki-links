@@ -1,8 +1,11 @@
 To-do:
 
--css, animations
+-css, animations (css class needs to change for animation to play)
+
+-Why does animation only play for leader
+
+-"Ready for next round" conditional to-dos
 
 -add modal to copy to keyboard
--update copy to keyboard text to be full url
 
--game over highscore css
+-media sizes to change text size

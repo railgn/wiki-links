@@ -56,7 +56,7 @@ export default function Score({
             <td>{highscore?.score}</td>
             <td>{dateDisplay}</td>
 
-            {thisIsYourScore && <td>Congrats on the highscore!</td>}
+            {/* {thisIsYourScore && <span>Congrats on the highscore!</span>} */}
         </tr>
     );
 }

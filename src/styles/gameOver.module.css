@@ -9,3 +9,17 @@
     padding: 1vh;
     font-size: smaller;
 }
+
+.buttonStyles button {
+    margin: auto;
+    font-size: large;
+}
+
+.buttonStyles {
+    padding: 0px 15vw;
+    display: flex;
+}
+
+.verticalPadding {
+    margin-top: 3vh;
+}

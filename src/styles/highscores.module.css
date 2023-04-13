@@ -1,0 +1,16 @@
+.tableClass table,
+.tableClass th,
+.tableClass td {
+    border: 1px solid;
+    text-align: center;
+    padding: 2px 5px;
+}
+
+.tableClass {
+    width: max-content;
+    margin: auto;
+}
+
+.highscoreTitle {
+    text-align: center;
+}
