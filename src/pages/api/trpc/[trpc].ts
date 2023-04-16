@@ -1,8 +1,9 @@
+/* eslint-disable */
 import { createNextApiHandler } from "@trpc/server/adapters/next";
 
 import { env } from "../../../env/server.mjs";
-import { createTRPCContext } from "../../../server/api/trpc";
 import { appRouter } from "../../../server/api/root";
+import { createTRPCContext } from "../../../server/api/trpc";
 
 // export API handler
 export default createNextApiHandler({

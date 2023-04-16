@@ -7,7 +7,7 @@ export default function pickRandomAnchors(anchors: string[], count: number) {
     for (let i = 0; i < count; i++) {
         const anchor = arr[Math.floor(Math.random() * arr.length)];
 
-        result.push(decode(anchor) as string);
+        result.push(decode(anchor));
 
         arr.splice(arr.indexOf(anchor as string), 1);
     }
@@ -19,7 +19,7 @@ function unique(arr: string[]) {
     const seen: Record<string, boolean> = {};
 
     return arr.filter((elem) => {
-        if (seen.hasOwnProperty(elem)) {
+        if (seen[elem]) {
             return false;
         } else {
             seen[elem] = true;
