@@ -5,6 +5,7 @@ import type { DefaultEventsMap } from "@socket.io/component-emitter";
 import io from "socket.io-client";
 import { decode } from "html-entities";
 import encodeURL from "@lib/encode_url";
+import Image from "next/image";
 
 import { defaultAnswerChoices } from "@lib/answer_choices";
 import { defaultFilters } from "@lib/filter";
@@ -82,7 +83,7 @@ export default function Game() {
         });
 
         console.log(animationClass);
-    }, [answerChoices.mainArticle, link.category, score.round]);
+    }, [answerChoices.mainArticle]);
 
     // socket event listeners
     useEffect(() => {
@@ -405,7 +406,14 @@ export default function Game() {
         <>
             <div className={styles.wrapper}>
                 <div className={styles.header}>
-                    <h1 className={styles.title}>Wiki-links</h1>
+                    {/* <h1 className={styles.title}>Wiki-links</h1> */}
+                    <Image
+                        className={styles.titleImg}
+                        src="/title.png"
+                        width="300"
+                        height="44"
+                        alt="Wiki-Links"
+                    />
                 </div>
                 {!socketLoaded && (
                     <div className={styles.loading}>Loading ...</div>

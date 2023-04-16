@@ -1,4 +1,5 @@
 import type { Filter, Category } from "@lib/filter";
+import styles from "../styles/checkbox.module.css";
 
 interface Props {
     setFilter: (state: Filter) => void;
@@ -16,7 +17,7 @@ export default function Checkbox({
     isLeader,
 }: Props) {
     return (
-        <div key={mykey}>
+        <div key={mykey} className={styles.checkbox}>
             <label htmlFor={category}>
                 <input
                     type="checkbox"

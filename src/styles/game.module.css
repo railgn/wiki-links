@@ -20,6 +20,10 @@
     width: 95vw;
 }
 
+.titleImg {
+    margin: auto;
+}
+
 .pid {
     position: absolute;
     top: 2vh;
@@ -78,11 +82,17 @@
     text-shadow: 2px 2px 0 #0000002b;
     border-radius: 7px;
     border-width: 1px;
-    background-color: #54d53a;
+    background-color: #29f04aea;
     color: white;
     font-weight: bold;
     padding: 5px 10px;
     cursor: pointer;
+}
+
+.startButton:disabled {
+    background-color: #3ba44cea;
+    color: rgb(187, 187, 187);
+    cursor: default;
 }
 
 .playerHUD {
@@ -185,7 +195,7 @@
 }
 
 .noAnimation {
-    animation: fadeIn 0.7s;
+    animation: fadeIn 0.75s;
 }
 
 .roleButton {

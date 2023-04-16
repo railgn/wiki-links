@@ -5,6 +5,7 @@ import createURL from "@lib/createURL";
 import { nicknames } from "@lib/nicknames";
 import { useContext, useEffect, useState } from "react";
 import styles from "../styles/index.module.css";
+import Image from "next/image";
 
 import { NameContext } from "../context/NameContext";
 
@@ -34,7 +35,14 @@ const Home: NextPage = () => {
                 <div>
                     <div>
                         <div className={styles.header}>
-                            <h1 className={styles.title}>Wiki-links</h1>
+                            {/* <h1 className={styles.title}>Wiki-links</h1> */}
+                            <Image
+                                className={styles.titleImg}
+                                src="/title.png"
+                                width="300"
+                                height="44"
+                                alt="Wiki-Links"
+                            />
                         </div>
                         <div className={styles.buffer}></div>
                         <div className={styles.mainContent}>

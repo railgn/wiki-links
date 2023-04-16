@@ -1,0 +1,7 @@
+.checkbox input[type="checkbox"]:checked {
+    color: green;
+}
+
+.checkbox:disabled {
+    color: blue;
+}
