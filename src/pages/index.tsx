@@ -12,13 +12,13 @@ const Home: NextPage = () => {
     const [joinState, setJoinState] = useState("0000");
     const { name, setName } = useContext(NameContext);
 
-    useEffect(() => {
-        const nickname = nicknames[
-            Math.floor(nicknames.length * Math.random())
-        ] as string;
+    // useEffect(() => {
+    //     const nickname = nicknames[
+    //         Math.floor(nicknames.length * Math.random())
+    //     ] as string;
 
-        setName(`${nickname}`);
-    }, []);
+    //     setName(`${nickname}`);
+    // }, []);
 
     // make font sizes dynamic
     // fix vertical spacing in "Join Lobby" section
@@ -50,6 +50,7 @@ const Home: NextPage = () => {
                                         onChange={(a) => {
                                             setName(a.target.value);
                                         }}
+                                        autoComplete="off"
                                     />
                                 </div>
                             </div>
@@ -75,17 +76,40 @@ const Home: NextPage = () => {
                                             className={styles.joinInput}
                                             type="text"
                                             id="join-code"
-                                            placeholder="Enter Code"
+                                            placeholder="Enter Lobby ID"
                                             onChange={(a) => {
                                                 setJoinState(a.target.value);
                                             }}
+                                            autoComplete="off"
                                         />
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div className={styles.buffer}></div>
-                        <div className={styles.about}>About</div>
+                        <div className={styles.about}>
+                            <div className={styles.aboutTitle}>About</div>
+                            <p className={styles.aboutParagraph}>
+                                <span className={styles.aboutWikilinks}>
+                                    Wiki-links
+                                </span>
+                                &nbsp;is a word association game you can play
+                                alone or with friends.
+                                <br />
+                                <br />
+                                Each round, you&apos;ll be prompted with the
+                                title of one Wikipedia article and four links to
+                                other Wikipedia articles. Three of these links
+                                come from the prompt article, while one comes
+                                from an unrelated article.
+                                <br />
+                                <br />
+                                Correctly identify the unrelated link as quickly
+                                as possible to earn the most points!
+                                <br />
+                                Have fun!
+                            </p>
+                        </div>
                     </div>
                 </div>
             </main>

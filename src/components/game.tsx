@@ -4,6 +4,7 @@ import type { Socket } from "socket.io";
 import type { DefaultEventsMap } from "@socket.io/component-emitter";
 import io from "socket.io-client";
 import { decode } from "html-entities";
+import encodeURL from "@lib/encode_url";
 
 import { defaultAnswerChoices } from "@lib/answer_choices";
 import { defaultFilters } from "@lib/filter";
@@ -41,6 +42,7 @@ export default function Game() {
     const [answerChoices, setAnswerChoices] = useState(defaultAnswerChoices);
     const [socketConnect, setSocketConnect] = useState(true);
     const [socketLoaded, setSocketLoaded] = useState(false);
+    const [deadline, setDeadline] = useState(new Date("2015-03-25"));
 
     const [numberOfRounds, setNumberOfRounds] = useState(10);
     const [roundTime, setRoundTime] = useState(20);
@@ -189,6 +191,10 @@ export default function Game() {
                 socket.on("pull player info", (allPlayersObj) => {
                     console.log("pulled player info");
                     setHUDinfo(allPlayersObj);
+                });
+
+                socket.on("pull deadline", (deadline) => {
+                    setDeadline(deadline);
                 });
             });
 
@@ -360,7 +366,12 @@ export default function Game() {
             // ADD TIMER CONTEXT SO THIS CONDITIONAL CAN ALSO CHECK IF TIMER !== 0.
             // RIGHT NOW GAME CAN STALL IF SOMEONE DISCONNECTS
             // ALSO WANT TO REMOVE FROM HUDINFO ON DISCONNECT IMMEDIATELY
-            if (HUDinfo[id]?.roundOver === false) {
+
+            const total =
+                Date.parse(deadline.toString()) -
+                Date.parse(new Date().toString());
+            const seconds = Math.floor((total / 1000) % 60);
+            if (HUDinfo[id]?.roundOver === false && seconds < 20) {
                 res = false;
             }
         }
@@ -407,7 +418,7 @@ export default function Game() {
                             onClick={handleClick}
                             title="Copy lobby link"
                         >
-                            Lobby Code: {pid}
+                            Lobby ID: {pid}
                         </div>
 
                         <div className={styles.verticalPadding}></div>
@@ -570,21 +581,27 @@ export default function Game() {
 
                                             {isSpectator && (
                                                 <button
+                                                    className={
+                                                        styles.roleButton
+                                                    }
                                                     onClick={() =>
                                                         becomePlayer()
                                                     }
                                                 >
-                                                    Become a Player
+                                                    Play
                                                 </button>
                                             )}
                                             {!isSpectator && (
                                                 <>
                                                     <button
+                                                        className={
+                                                            styles.roleButton
+                                                        }
                                                         onClick={() =>
                                                             becomeSpectator()
                                                         }
                                                     >
-                                                        Become a Spectator
+                                                        Spectate
                                                     </button>
                                                 </>
                                             )}
@@ -715,9 +732,9 @@ export default function Game() {
                                                                             className={
                                                                                 styles.articleDisplay
                                                                             }
-                                                                            href={
+                                                                            href={encodeURL(
                                                                                 answerChoices.mainArticle
-                                                                            }
+                                                                            )}
                                                                             target="_blank"
                                                                             rel="noreferrer"
                                                                         >
@@ -734,9 +751,9 @@ export default function Game() {
                                                                             className={
                                                                                 styles.articleDisplay
                                                                             }
-                                                                            href={
+                                                                            href={encodeURL(
                                                                                 answerChoices.subArticle
-                                                                            }
+                                                                            )}
                                                                             target="_blank"
                                                                             rel="noreferrer"
                                                                         >
@@ -759,6 +776,9 @@ export default function Game() {
                                                             readyForNextRound() && (
                                                                 <div>
                                                                     <button
+                                                                        className={
+                                                                            styles.afterRoundButton
+                                                                        }
                                                                         disabled={
                                                                             !isLeader
                                                                         }
@@ -772,12 +792,15 @@ export default function Game() {
                                                                             )
                                                                         }
                                                                     >
-                                                                        New
+                                                                        Next
                                                                         Round
                                                                     </button>
                                                                     &nbsp;
                                                                     &nbsp;
                                                                     <button
+                                                                        className={
+                                                                            styles.afterRoundButton
+                                                                        }
                                                                         disabled={
                                                                             !isLeader
                                                                         }
@@ -789,8 +812,8 @@ export default function Game() {
                                                                             )
                                                                         }
                                                                     >
-                                                                        Lobby
-                                                                        Options
+                                                                        Return
+                                                                        to Lobby
                                                                     </button>
                                                                 </div>
                                                             )}

@@ -2,7 +2,6 @@
     height: 7vh;
     width: 95vw;
     text-align: center;
-    border: 2px solid red;
     margin: auto;
     display: flex;
     align-items: center;
@@ -16,11 +15,14 @@
     width: 100vw;
     height: 50vh;
     text-align: center;
-    border: 2px solid red;
     max-width: 500px;
-    max-height: 300px;
+    max-height: 210px;
     margin: auto;
     font-size: 1.5rem;
+    color: white;
+    font-weight: bold;
+    border-radius: 10px;
+    /* border: 3px solid white; */
 }
 
 .nameArea {
@@ -28,22 +30,25 @@
     max-width: 500px;
     height: 15vh;
     max-height: 80px;
-    border: 2px solid red;
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+    background-color: mediumpurple;
 }
 
 .name {
     width: 100vw;
     max-width: 500px;
+    text-shadow: 2px 2px 0 #0000002b;
 }
 
 .nameInput {
     height: 13vh;
     max-height: 50px;
-    font-size: 1.5rem;
     text-align: center;
+    font-size: smaller;
+    border-radius: 10px;
+    border: 2px solid #1d40b4;
 }
 
 .lobbyArea {
@@ -52,41 +57,44 @@
     width: 100vw;
     max-width: 500px;
     height: 35vh;
-    max-height: 220px;
+    max-height: 130px;
     align-items: center;
     justify-content: center;
-    border: 2px solid red;
 }
 
 .createLobby {
     width: 50vw;
     max-width: 250px;
     height: 35vh;
-    max-height: 220px;
-    border: 2px solid red;
+    max-height: 130px;
+    background-color: #53e237;
     display: flex;
-    align-items: center;
 }
 
 .createLink {
     width: 50vw;
     max-width: 250px;
+    padding-top: 38px;
+    text-shadow: 2px 2px 0 #0000002b;
 }
 
 .joinLobby {
     width: 50vw;
     max-width: 250px;
     height: 35vh;
-    max-height: 220px;
-    border: 2px solid red;
-    display: flex;
+    max-height: 130px;
+    background-color: #2c8de7;
     align-items: center;
+    display: flex;
     flex-wrap: wrap;
+    flex-direction: column;
 }
 
 .joinLink {
     width: 50vw;
     max-width: 250px;
+    padding-top: 10px;
+    text-shadow: 2px 2px 0 #0000002b;
 }
 
 .joinInput {
@@ -95,6 +103,9 @@
     font-size: 1.5rem;
     text-align: center;
     max-width: 225px;
+    font-size: smaller;
+    border-radius: 10px;
+    border: 2px solid #1d40b4;
 }
 
 .buffer {
@@ -106,9 +117,27 @@
     width: 100vw;
     height: 30vh;
     text-align: center;
-    border: 2px solid red;
-    max-width: 500px;
+    max-width: 700px;
     max-height: 300px;
     margin: auto;
     font-size: 1.5rem;
+    padding: 10px;
+    background-color: #1d40b4;
+    color: white;
+    border-radius: 10px;
+    border: 3px solid rgb(154, 168, 255);
+}
+
+.aboutTitle {
+    margin: auto;
+    font-weight: bold;
+}
+
+.aboutParagraph {
+    text-align: left;
+    font-size: large;
+}
+
+.aboutWikilinks {
+    font-weight: bold;
 }

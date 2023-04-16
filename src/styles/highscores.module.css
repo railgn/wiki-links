@@ -1,7 +1,7 @@
 .tableClass table,
 .tableClass th,
 .tableClass td {
-    border: 1px solid;
+    border: 1px solid rgb(154, 168, 255);
     text-align: center;
     padding: 2px 5px;
 }
@@ -13,4 +13,5 @@
 
 .highscoreTitle {
     text-align: center;
+    font-size: x-large;
 }

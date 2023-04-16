@@ -5,14 +5,17 @@
 .gameOverContainer {
     height: 88vh;
     width: 70vw;
-    border: 2px solid red;
     padding: 1vh;
     font-size: smaller;
 }
 
 .buttonStyles button {
     margin: auto;
-    font-size: large;
+    font-size: x-large;
+    border: 3px solid rgb(154, 168, 255);
+    border-radius: 6px;
+    color: white;
+    background-color: rgba(71, 96, 255, 0.847);
 }
 
 .buttonStyles {

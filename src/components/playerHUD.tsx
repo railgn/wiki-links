@@ -25,25 +25,25 @@ export default function PlayerHUD({
     let medal = <></>;
 
     if (place === 1) {
-        medal = <>&#129351;</>;
+        medal = <>&nbsp;&#129351;</>;
     } else if (place === 2) {
-        medal = <>&#129352;</>;
+        medal = <>&nbsp;&#129352;</>;
     } else if (place === 3) {
-        medal = <>&#129353;</>;
+        medal = <>&nbsp;&#129353;</>;
     }
 
     return (
         <div key={key} className={styles.container}>
             <div>
                 {isLeader && <>&#128081;</>}&nbsp;
-                {name}&nbsp; |&nbsp; Score: {score} &nbsp;
+                {name}&nbsp; |&nbsp; Score: {score}
                 {!game.filter_select &&
                     !game.game_over &&
                     (roundOver ? (
                         correct ? (
-                            <>&#128994;</>
+                            <>&nbsp;&#128994;</>
                         ) : (
-                            <>&#128308;</>
+                            <>&nbsp;&#128308;</>
                         )
                     ) : (
                         <></>

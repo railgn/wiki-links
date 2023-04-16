@@ -230,7 +230,7 @@ const ioHandler = (req, res) => {
                     delete socketObj[pid];
                 } else {
                     if (socketObj[pid]?.leader[socket.id]) {
-                        //assign leader to first player
+                        // assign leader to first player
                         const newLeader_ID = Object.keys(
                             socketObj[pid]!.all_players
                         )[0] as string;
@@ -244,6 +244,13 @@ const ioHandler = (req, res) => {
 
                         io.to(newLeader_ID).emit("become leader");
                     }
+                }
+
+                for (const id in socketObj[pid]!.all_sockets) {
+                    socketObj[pid]!.all_sockets[id]!.emit(
+                        "pull player info",
+                        socketObj[pid]!.all_players
+                    );
                 }
             });
 
@@ -316,7 +323,7 @@ const ioHandler = (req, res) => {
                         socketObj[pid]!.all_players;
 
                     for (const id in all_players_without_sockets) {
-                        //@ts-ignore
+                        // @ts-expect-error
                         delete all_players_without_sockets[id].socket;
                     }
 

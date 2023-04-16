@@ -15,34 +15,31 @@
     font-size: xx-large;
     display: inline-block;
     text-align: center;
-    animation: 0.3s ease-out 0s 1 slideInFromBottom;
+    animation: 0.2s ease-out 0s 1 slideInFromBottom;
     vertical-align: bottom;
-    border: 2px solid black;
+    border: 3px solid white;
+    border-radius: 10px;
+    text-shadow: 2px 2px 0 #0000002b;
+    color: white;
 }
 
 .correct {
-    background-color: rgb(16, 200, 16);
-    color: white;
+    background-color: rgba(31, 200, 79, 0.944);
 }
 
 .incorrect {
-    background-color: rgb(228, 60, 54);
-    color: white;
+    background-color: rgba(230, 52, 79, 0.91);
 }
 
 .blue {
-    background-color: lightskyblue;
-    color: rgb(1, 1, 95);
+    background-color: rgba(59, 166, 233, 0.951);
 }
 .yellow {
-    background-color: khaki;
-    color: rgb(10, 10, 9);
+    background-color: rgba(228, 191, 82, 0.964);
 }
 .purple {
-    background-color: mediumpurple;
-    color: rgb(8, 8, 8);
+    background-color: rgba(136, 96, 215, 0.944);
 }
 .orange {
-    background-color: lightcoral;
-    color: rgb(23, 22, 21);
+    background-color: rgb(235, 141, 83);
 }
