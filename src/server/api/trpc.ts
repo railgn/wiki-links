@@ -1,3 +1,5 @@
+import { initTRPC } from "@trpc/server";
+import superjson from "superjson";
 /**
  * YOU PROBABLY DON'T NEED TO EDIT THIS FILE, UNLESS:
  * 1. You want to modify request context (see Part 1)
@@ -32,9 +34,9 @@ type CreateContextOptions = Record<string, never>;
  * @see https://create.t3.gg/en/usage/trpc#-servertrpccontextts
  */
 const createInnerTRPCContext = async (_opts: CreateContextOptions) => {
-  return {
-    prisma,
-  };
+    return {
+        prisma,
+    };
 };
 
 /**
@@ -43,7 +45,7 @@ const createInnerTRPCContext = async (_opts: CreateContextOptions) => {
  * @link https://trpc.io/docs/context
  */
 export const createTRPCContext = async (_opts: CreateNextContextOptions) => {
-  return await createInnerTRPCContext({});
+    return await createInnerTRPCContext({});
 };
 
 /**
@@ -52,17 +54,15 @@ export const createTRPCContext = async (_opts: CreateNextContextOptions) => {
  * This is where the trpc api is initialized, connecting the context and
  * transformer
  */
-import { initTRPC } from "@trpc/server";
-import superjson from "superjson";
 
 const t = initTRPC
-  .context<Awaited<ReturnType<typeof createTRPCContext>>>()
-  .create({
-    transformer: superjson,
-    errorFormatter({ shape }) {
-      return shape;
-    },
-  });
+    .context<Awaited<ReturnType<typeof createTRPCContext>>>()
+    .create({
+        transformer: superjson,
+        errorFormatter({ shape }) {
+            return shape;
+        },
+    });
 
 /**
  * 3. ROUTER & PROCEDURE (THE IMPORTANT BIT)

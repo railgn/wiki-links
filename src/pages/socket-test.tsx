@@ -1,7 +1,7 @@
-import io from "socket.io-client";
 import { useEffect } from "react";
+import io from "socket.io-client";
 
-export default () => {
+export default function useTest() {
     useEffect(() => {
         fetch("/api/socket").finally(() => {
             const socket = io();
@@ -25,4 +25,4 @@ export default () => {
         });
     }, []);
     return <h1>Socket.io</h1>;
-};
+}
