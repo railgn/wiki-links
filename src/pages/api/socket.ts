@@ -121,7 +121,7 @@ const ioHandler = (req, res) => {
                 const lobby = lobbies[pid];
                 if (!lobby) return console.log(`no lobby with pid ${pid}`);
 
-                console.log("filter recieved");
+                // console.log("filter recieved");
                 lobby.filter = filter;
                 for (const id in lobby.all_sockets) {
                     lobby.all_sockets[id]!.emit("pull filter", filter);
@@ -151,7 +151,7 @@ const ioHandler = (req, res) => {
             );
 
             socket.on("post game state", (pid: string, game) => {
-                console.log("game state recieved");
+                // console.log("game state recieved");
                 const lobby = lobbies[pid];
                 if (!lobby) return console.log(`no lobby with pid ${pid}`);
 
