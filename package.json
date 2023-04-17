@@ -20,6 +20,7 @@
         "@types/axios": "^0.14.0",
         "@types/socket.io-client": "^3.0.0",
         "axios": "^1.2.2",
+        "compress-json": "^2.1.2",
         "html-entities": "^2.3.3",
         "js-levenshtein": "^1.1.6",
         "jssoup": "^0.0.15",

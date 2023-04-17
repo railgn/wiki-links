@@ -87,120 +87,126 @@ export default function Game() {
 
     // socket event listeners
     useEffect(() => {
-        if (!pid) return;
+        if (pid && !socket) {
+            setSocketConnect((newestSocketConnectValue) => {
+                if (!newestSocketConnectValue) return false;
 
-        setSocketConnect((newestSocketConnectValue) => {
-            if (!newestSocketConnectValue) return false;
+                if (name === "") {
+                    const nickname = nicknames[
+                        Math.floor(nicknames.length * Math.random())
+                    ] as string;
 
-            if (name === "") {
-                const nickname = nicknames[
-                    Math.floor(nicknames.length * Math.random())
-                ] as string;
+                    setName(`${nickname}`);
+                }
 
-                setName(`${nickname}`);
-            }
+                console.log("socket running");
+                fetch("/api/socket").finally(() => {
+                    // @ts-expect-error
+                    socket = io();
 
-            console.log("socket running");
-            fetch("/api/socket").finally(() => {
-                // @ts-expect-error
-                socket = io();
+                    let localLeader = false;
+                    let localSpectator = true;
 
-                let localLeader = false;
-                let localSpectator = true;
+                    socket.on("connect", () => {
+                        socket.emit("pid", pid);
+                    });
 
-                socket.on("connect", () => {
-                    socket.emit("pid", pid);
-                });
+                    socket.on("connect state", () => {
+                        setSocketLoaded(true);
+                    });
 
-                socket.on("connect state", () => {
-                    setSocketLoaded(true);
-                });
+                    socket.on("become leader", () => {
+                        console.log("become leader");
+                        setIsLeader(true);
+                        setIsSpectator(false);
+                        localLeader = true;
+                    });
 
-                socket.on("become leader", () => {
-                    console.log("become leader");
-                    setIsLeader(true);
-                    setIsSpectator(false);
-                    localLeader = true;
-                });
+                    socket.on("become player", () => {
+                        console.log("become player");
+                        setIsSpectator(false);
+                        localSpectator = false;
+                    });
 
-                socket.on("become player", () => {
-                    console.log("become player");
-                    setIsSpectator(false);
-                    localSpectator = false;
-                });
+                    socket.on("a user has joined this room", () => {
+                        console.log("a user has joined this room");
+                    });
 
-                socket.on("a user has joined this room", () => {
-                    console.log("a user has joined this room");
-                });
-
-                socket.on("pull filter", (filter) => {
-                    if (!localLeader) {
-                        console.log("filter pulled");
-                        setFilter(filter);
-                    }
-                });
-
-                socket.on("pull answer choices", (answerChoices, category) => {
-                    if (!localLeader) {
-                        console.log("answer choices pulled");
-                        setAnswerChoices(answerChoices);
-                        setLink({
-                            ...link,
-                            category,
-                        });
-                    }
-                });
-
-                socket.on("pull game state", (gameServer) => {
-                    if (!localLeader) {
-                        console.log("game state pulled");
-                        setGame(gameServer);
-
-                        if (!gameServer.game_over) {
-                            startGameNonLeader(score, setScore);
+                    socket.on("pull filter", (filter) => {
+                        if (!localLeader) {
+                            console.log("filter pulled");
+                            setFilter(filter);
                         }
-                    }
+                    });
+
+                    socket.on(
+                        "pull answer choices",
+                        (answerChoices, category) => {
+                            if (!localLeader) {
+                                console.log("answer choices pulled");
+                                setAnswerChoices(answerChoices);
+                                setLink({
+                                    ...link,
+                                    category,
+                                });
+                            }
+                        }
+                    );
+
+                    socket.on("pull game state", (gameServer) => {
+                        if (!localLeader) {
+                            console.log("game state pulled");
+                            setGame(gameServer);
+
+                            if (!gameServer.game_over) {
+                                startGameNonLeader(score, setScore);
+                            }
+                        }
+                    });
+
+                    socket.on(
+                        "pull number of rounds",
+                        (numberOfRoundsServer) => {
+                            if (!localLeader) {
+                                console.log("number of rounds pulled");
+                                setNumberOfRounds(numberOfRoundsServer);
+                            }
+                        }
+                    );
+
+                    socket.on("pull round time", (roundTimeServer) => {
+                        if (!localLeader) {
+                            console.log("round time pulled");
+                            setRoundTime(roundTimeServer);
+                        }
+                    });
+
+                    socket.on("become player handshake", () => {
+                        setIsSpectator(false);
+                        localSpectator = false;
+                    });
+
+                    socket.on("become spectator handshake", () => {
+                        console.log("become spectator handshake");
+                        setIsSpectator(true);
+                        localSpectator = true;
+                        setIsLeader(false);
+                        localLeader = false;
+                    });
+
+                    socket.on("pull player info", (allPlayersObj) => {
+                        console.log("pulled player info");
+                        setHUDinfo(allPlayersObj);
+                    });
+
+                    socket.on("pull deadline", (deadline) => {
+                        setDeadline(deadline);
+                    });
                 });
 
-                socket.on("pull number of rounds", (numberOfRoundsServer) => {
-                    if (!localLeader) {
-                        console.log("number of rounds pulled");
-                        setNumberOfRounds(numberOfRoundsServer);
-                    }
-                });
-
-                socket.on("pull round time", (roundTimeServer) => {
-                    if (!localLeader) {
-                        console.log("round time pulled");
-                        setRoundTime(roundTimeServer);
-                    }
-                });
-
-                socket.on("become player handshake", () => {
-                    setIsSpectator(false);
-                    localSpectator = false;
-                });
-
-                socket.on("become spectator handshake", () => {
-                    console.log("become spectator handshake");
-                    setIsSpectator(true);
-                    localSpectator = true;
-                    setIsLeader(false);
-                    localLeader = false;
-                });
-
-                socket.on("pull player info", (allPlayersObj) => {
-                    console.log("pulled player info");
-                    setHUDinfo(allPlayersObj);
-                });
-
-                socket.on("pull deadline", (deadline) => {
-                    setDeadline(deadline);
-                });
+                return false;
             });
-
-            return false;
-        });
+        }
     }, [pid]);
 
     // filter change event

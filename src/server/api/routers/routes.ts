@@ -2,6 +2,7 @@ import { z } from "zod";
 import pickRandomAnchors from "@lib/pick_random_anchors";
 import checkUnique from "@lib/unique_arr";
 import { decode } from "html-entities";
+import { decompress } from "compress-json";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
 import { PrismaClient } from "@prisma/client";
@@ -22,8 +23,11 @@ export const exampleRouter = createTRPCRouter({
         .query(async ({ input }) => {
             const fileName: string = `${input.category}.json`;
 
-            const category: Data = await import(`../../../data/${fileName}`);
+            const compressed = await import(`../../../data/${fileName}`);
 
+            await new Promise((resolve) => setTimeout(resolve, 50));
+
+            const category: Data = decompress(compressed.default);
             await new Promise((resolve) => setTimeout(resolve, 50));
 
             const articles = Object.keys(category).filter((e) => e !== "error");
