@@ -12,7 +12,8 @@ export type Category =
     | "Philosophy and religion"
     | "Social sciences and society"
     | "Sports and recreation"
-    | "Video games";
+    | "Video games"
+    | "Warfare";
 
 export type Filter = Record<Category, boolean>;
 
@@ -31,6 +32,7 @@ export const defaultFilters: Filter = {
     "Social sciences and society": false,
     "Sports and recreation": false,
     "Video games": false,
+    Warfare: false,
 };
 
 export function generateCategory(filter: Filter) {
